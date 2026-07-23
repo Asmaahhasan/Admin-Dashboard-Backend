@@ -1,0 +1,16 @@
+﻿src/server.ts(68,16): error TS2353: Object literal may only specify known properties, and 'email' does not exist in type 'UserWhereUniqueInput'.
+src/server.ts(71,49): error TS2339: Property 'passwordHash' does not exist on type '{ id: string; role: Role; createdAt: Date; updatedAt: Date; }'.
+src/server.ts(75,63): error TS2339: Property 'passwordHash' does not exist on type '{ id: string; role: Role; createdAt: Date; updatedAt: Date; }'.
+src/server.ts(81,34): error TS2339: Property 'email' does not exist on type '{ id: string; role: Role; createdAt: Date; updatedAt: Date; }'.
+src/server.ts(86,43): error TS2339: Property 'email' does not exist on type '{ id: string; role: Role; createdAt: Date; updatedAt: Date; }'.
+src/server.ts(221,9): error TS2353: Object literal may only specify known properties, and 'activity' does not exist in type 'SyllabusWeekInclude<DefaultArgs>'.
+src/server.ts(302,33): error TS2339: Property 'lessonActivity' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/server.ts(313,31): error TS2339: Property 'lessonActivity' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/server.ts(321,31): error TS2339: Property 'lessonActivity' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/server.ts(331,18): error TS2339: Property 'lessonActivityItem' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/server.ts(337,20): error TS2339: Property 'lessonActivityItem' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/server.ts(348,33): error TS2339: Property 'lessonActivity' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/server.ts(363,18): error TS2339: Property 'lessonActivity' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/server.ts(416,35): error TS2339: Property 'lessonActivity' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/server.ts(441,62): error TS2353: Object literal may only specify known properties, and 'email' does not exist in type 'UserWhereUniqueInput'.
+src/server.ts(448,11): error TS2353: Object literal may only specify known properties, and 'email' does not exist in type '(Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)'.

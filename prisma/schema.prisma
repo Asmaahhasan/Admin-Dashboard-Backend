@@ -1,0 +1,342 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== Enums ====================
+
+enum Role {
+  TEACHER
+  ADMIN
+}
+
+enum LessonStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum WeekType {
+  LESSON
+  HOLIDAY
+  EXAM
+}
+
+// ==================== Core Identity ====================
+
+model User {
+  id           String   @id @default(uuid())
+  email        String?  @unique
+  passwordHash String?
+  role         Role
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  teacher      Teacher?
+  admin        Admin?
+
+  @@map("users")
+}
+
+model Teacher {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  madrasatiId  String   @unique
+  nationalId   String   @unique
+  teacherName  String
+  mobile       String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  subscription      Subscription?
+  templates         Template[]
+  generatedLessons  GeneratedLesson[]
+  usageLogs         UsageLog[]
+
+  @@map("teachers")
+}
+
+model Admin {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fullName    String
+  email       String   @unique
+  mobile      String?
+  permissions String[] @default([])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  uploadedSyllabusWeeks SyllabusWeek[]
+
+  @@map("admins")
+}
+
+// ==================== Lesson Generation Feature (AI) ====================
+
+model Subscription {
+  id        String    @id @default(uuid())
+  plan      String
+  active    Boolean   @default(true)
+  startsAt  DateTime  @default(now())
+  endsAt    DateTime?
+
+  teacher   Teacher?  @relation(fields: [teacherId], references: [id])
+  teacherId String?   @unique
+
+  @@map("subscriptions")
+}
+
+model PromptTemplate {
+  id               String            @id @default(uuid())
+  name             String
+  description      String
+  version          Int               @default(1)
+  content          String
+  locale           String            @default("ar-SA")
+  isPublished      Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  promptVersions   PromptVersion[]
+  generatedLessons GeneratedLesson[]
+
+  @@map("prompt_templates")
+}
+
+model PromptVersion {
+  id         String         @id @default(uuid())
+  template   PromptTemplate @relation(fields: [templateId], references: [id])
+  templateId String
+  version    Int
+  changelog  String
+  content    String
+  createdAt  DateTime       @default(now())
+
+  @@map("prompt_versions")
+}
+
+model Template {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  owner       Teacher  @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  payload     Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("templates")
+}
+
+model GeneratedLesson {
+  id               String          @id @default(uuid())
+  teacher          Teacher         @relation(fields: [teacherId], references: [id])
+  teacherId        String
+  promptTemplate   PromptTemplate? @relation(fields: [promptTemplateId], references: [id])
+  promptTemplateId String?
+  lessonDate       DateTime
+  subject          String
+  grade            String
+  section          String?
+  output           Json
+  status           LessonStatus    @default(PENDING)
+  metadata         Json?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@map("generated_lessons")
+}
+
+model UsageLog {
+  id        String   @id @default(uuid())
+  teacher   Teacher  @relation(fields: [teacherId], references: [id])
+  teacherId String
+  event     String
+  details   Json?
+  createdAt DateTime @default(now())
+
+  @@map("usage_logs")
+}
+
+// ==================== Syllabus Distribution Feature ====================
+
+model EducationStage {
+  id     String  @id @default(uuid())
+  name   String  @unique   // "الابتدائية", "المتوسطة", "الثانوية العامة", "التعليم المستمر", "التربية الخاصة"
+  order  Int     @default(0)
+
+  tracks Track[]
+
+  @@map("education_stages")
+}
+
+model Track {
+  id       String         @id @default(uuid())
+  stage    EducationStage @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  stageId  String
+  name     String         // "عام" (افتراضي)، أو "المسار العام", "مسار الصحة والحياة"...
+  order    Int            @default(0)
+
+  grades   Grade[]
+
+  @@unique([stageId, name])
+  @@map("tracks")
+}
+
+model Grade {
+  id      String   @id @default(uuid())
+  track   Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId String
+  name    String   // "الصف الأول الابتدائي"
+  order   Int      @default(0)
+
+  semesters Semester[]
+  gradeSubjects GradeSubject[]
+
+  @@unique([trackId, name])
+  @@map("grades")
+}
+
+model Semester {
+  id                  String   @id @default(uuid())
+  madrasatiSemesterId String?
+  name                String
+  order               Int      @default(0)
+
+  gradeId             String
+  grade               Grade    @relation(fields: [gradeId], references: [id], onDelete: Cascade)
+
+  gradeSubjects       GradeSubject[]
+
+  @@unique([gradeId, name])
+  @@map("semesters")
+}
+
+model Subject {
+  id   String  @id @default(uuid())
+  name String  @unique   // "رياضيات", "لغتي"...
+
+  gradeSubjects GradeSubject[]
+
+  @@map("subjects")
+}
+
+model GradeSubject {
+  id            String         @id @default(uuid())
+
+  grade         Grade          @relation(fields: [gradeId], references: [id], onDelete: Cascade)
+  gradeId       String
+
+  semester      Semester       @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  semesterId    String
+
+  subject       Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  subjectId     String
+
+  syllabusWeeks SyllabusWeek[]
+  activities    LessonActivity[]
+
+  createdAt     DateTime       @default(now())
+
+  @@unique([gradeId, semesterId, subjectId])
+  @@map("grade_subjects")
+}
+
+model SyllabusWeek {
+  id             String       @id @default(uuid())
+
+  gradeSubject   GradeSubject @relation(fields: [gradeSubjectId], references: [id], onDelete: Cascade)
+  gradeSubjectId String
+
+  weekNumber     Int
+
+  startDateHijri      String?
+  endDateHijri         String?
+  startDateGregorian   DateTime?
+  endDateGregorian     DateTime?
+
+  weekType       WeekType @default(LESSON)
+  title          String
+
+  uploadedBy     Admin    @relation(fields: [uploadedById], references: [id])
+  uploadedById   String
+
+  activity       LessonActivity?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([gradeSubjectId, weekNumber])
+  @@map("syllabus_weeks")
+}
+
+// ==================== System / Admin Tools ====================
+
+model AnalyticsEvent {
+  id        String   @id @default(uuid())
+  category  String
+  action    String
+  label     String?
+  value     Int?     @default(0)
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@map("analytics_events")
+}
+
+model ExtensionVersion {
+  id         String   @id @default(uuid())
+  version    String
+  changelog  String?
+  releasedAt DateTime @default(now())
+
+  @@map("extension_versions")
+}
+
+model FeatureFlag {
+  id          String  @id @default(uuid())
+  key         String  @unique
+  enabled     Boolean @default(false)
+  description String?
+
+  @@map("feature_flags")
+}
+
+model LessonActivity {
+  id             String               @id @default(uuid())
+  syllabusWeek   SyllabusWeek?        @relation(fields: [syllabusWeekId], references: [id], onDelete: Cascade)
+  syllabusWeekId String?              @unique
+  gradeSubject   GradeSubject         @relation(fields: [gradeSubjectId], references: [id], onDelete: Cascade)
+  gradeSubjectId String
+  lessonTitle    String
+  items          LessonActivityItem[]
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  @@map("lesson_activities")
+}
+
+model LessonActivityItem {
+  id               String         @id @default(uuid())
+  lessonActivityId String
+  lessonActivity   LessonActivity @relation(fields: [lessonActivityId], references: [id], onDelete: Cascade)
+  type             String         // "GAME", "PRESENTATION", "PDF", "VIDEO", etc.
+  title            String
+  url              String?
+  filePath         String?
+  thumbnailUrl     String?        // Added for thumbnail preview
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@map("lesson_activity_items")
+}

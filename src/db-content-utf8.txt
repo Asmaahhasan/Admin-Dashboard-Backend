@@ -1,0 +1,636 @@
+﻿[
+  {
+    "id": "c8e0ecfa-7f14-4b81-9f93-153428f30b12",
+    "name": "Ïº┘äÏºÏ¿Ï¬Ï»ÏºÏª┘èÏ®",
+    "order": 1,
+    "hasTracks": false,
+    "tracks": [
+      {
+        "id": "0f2b8378-fa02-4549-8fc8-6932c1d9cbfa",
+        "stageId": "c8e0ecfa-7f14-4b81-9f93-153428f30b12",
+        "name": "┘àÏ│ÏºÏ▒ Ï╣Ïº┘à",
+        "order": 1,
+        "grades": [
+          {
+            "id": "2b6e2ac4-da91-4805-9717-4283e038ddae",
+            "trackId": "0f2b8378-fa02-4549-8fc8-6932c1d9cbfa",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏú┘ê┘ä",
+            "order": 1
+          },
+          {
+            "id": "a7a50688-376c-4094-ad9d-c4f855c42ff7",
+            "trackId": "0f2b8378-fa02-4549-8fc8-6932c1d9cbfa",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘å┘è",
+            "order": 2
+          },
+          {
+            "id": "30f0a4af-f569-4a23-b078-de76f9f334ca",
+            "trackId": "0f2b8378-fa02-4549-8fc8-6932c1d9cbfa",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘äÏ½",
+            "order": 3
+          },
+          {
+            "id": "372a3c4a-971d-44ed-af73-b8506f7c4746",
+            "trackId": "0f2b8378-fa02-4549-8fc8-6932c1d9cbfa",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ▒ÏºÏ¿Ï╣",
+            "order": 4
+          },
+          {
+            "id": "606dfe30-88e2-44a6-bbed-7ef2cfac2f6a",
+            "trackId": "0f2b8378-fa02-4549-8fc8-6932c1d9cbfa",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ«Ïº┘àÏ│",
+            "order": 5
+          },
+          {
+            "id": "a58aaff0-2772-4c02-97d1-df6095000bc7",
+            "trackId": "0f2b8378-fa02-4549-8fc8-6932c1d9cbfa",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ│ÏºÏ»Ï│",
+            "order": 6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "2db02e2b-41c6-4637-b25e-ef24e3d92e4b",
+    "name": "Ïº┘ä┘àÏ¬┘êÏ│ÏÀÏ®",
+    "order": 2,
+    "hasTracks": false,
+    "tracks": [
+      {
+        "id": "57b92183-17f4-46f8-8bd0-56800dd93dad",
+        "stageId": "2db02e2b-41c6-4637-b25e-ef24e3d92e4b",
+        "name": "┘àÏ│ÏºÏ▒ Ï╣Ïº┘à",
+        "order": 1,
+        "grades": [
+          {
+            "id": "dfc0e870-fc73-43ac-b2d2-70b28ac6f668",
+            "trackId": "57b92183-17f4-46f8-8bd0-56800dd93dad",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏú┘ê┘ä",
+            "order": 1
+          },
+          {
+            "id": "9ca14753-28bc-45f6-9f62-4b3e1168260c",
+            "trackId": "57b92183-17f4-46f8-8bd0-56800dd93dad",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘å┘è",
+            "order": 2
+          },
+          {
+            "id": "d4700947-8b55-4abd-ad8d-753e1eb0a8a9",
+            "trackId": "57b92183-17f4-46f8-8bd0-56800dd93dad",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘äÏ½",
+            "order": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "202659f1-76a2-4e76-ab7d-3225feb22d37",
+    "name": "Ïº┘ä┘àÏ▒Ï¡┘äÏ® Ïº┘äÏºÏ¿Ï¬Ï»ÏºÏª┘èÏ®",
+    "order": 1,
+    "hasTracks": false,
+    "tracks": [
+      {
+        "id": "e7a74e0c-5af7-4cb2-85c0-b53e7500d77a",
+        "stageId": "202659f1-76a2-4e76-ab7d-3225feb22d37",
+        "name": "Ï╣Ïº┘à",
+        "order": 0,
+        "grades": [
+          {
+            "id": "05563e7b-37a6-45f3-bd9f-3f457442458c",
+            "trackId": "e7a74e0c-5af7-4cb2-85c0-b53e7500d77a",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏú┘ê┘ä Ïº┘äÏºÏ¿Ï¬Ï»ÏºÏª┘è",
+            "order": 1
+          },
+          {
+            "id": "c0331407-4178-4548-ae96-9a75c9c0be56",
+            "trackId": "e7a74e0c-5af7-4cb2-85c0-b53e7500d77a",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘å┘è Ïº┘äÏºÏ¿Ï¬Ï»ÏºÏª┘è",
+            "order": 2
+          },
+          {
+            "id": "0e0010b4-3824-4c36-8a77-6cd472b1e544",
+            "trackId": "e7a74e0c-5af7-4cb2-85c0-b53e7500d77a",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘äÏ½ Ïº┘äÏºÏ¿Ï¬Ï»ÏºÏª┘è",
+            "order": 3
+          },
+          {
+            "id": "f1e68e60-bda4-4764-a95e-610cc5cadbfb",
+            "trackId": "e7a74e0c-5af7-4cb2-85c0-b53e7500d77a",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ▒ÏºÏ¿Ï╣ Ïº┘äÏºÏ¿Ï¬Ï»ÏºÏª┘è",
+            "order": 4
+          },
+          {
+            "id": "8f54d1d3-993d-4abf-8804-a27c62474742",
+            "trackId": "e7a74e0c-5af7-4cb2-85c0-b53e7500d77a",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ«Ïº┘àÏ│ Ïº┘äÏºÏ¿Ï¬Ï»ÏºÏª┘è",
+            "order": 5
+          },
+          {
+            "id": "25484a97-4516-4510-bbaf-0bd5586ef86d",
+            "trackId": "e7a74e0c-5af7-4cb2-85c0-b53e7500d77a",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ│ÏºÏ»Ï│ Ïº┘äÏºÏ¿Ï¬Ï»ÏºÏª┘è",
+            "order": 6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fff8b11e-bae6-4fbd-abe4-e7beb959f187",
+    "name": "Ïº┘ä┘àÏ▒Ï¡┘äÏ® Ïº┘ä┘àÏ¬┘êÏ│ÏÀÏ®",
+    "order": 2,
+    "hasTracks": false,
+    "tracks": [
+      {
+        "id": "36ebab4c-54e3-4f5e-befe-ce9a85e1db27",
+        "stageId": "fff8b11e-bae6-4fbd-abe4-e7beb959f187",
+        "name": "Ï╣Ïº┘à",
+        "order": 0,
+        "grades": [
+          {
+            "id": "86881386-558d-42e6-8fae-400ab99505e6",
+            "trackId": "36ebab4c-54e3-4f5e-befe-ce9a85e1db27",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏú┘ê┘ä Ïº┘ä┘àÏ¬┘êÏ│ÏÀ",
+            "order": 1
+          },
+          {
+            "id": "852c9151-0a6b-435b-a77b-8000a4025e9a",
+            "trackId": "36ebab4c-54e3-4f5e-befe-ce9a85e1db27",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘å┘è Ïº┘ä┘àÏ¬┘êÏ│ÏÀ",
+            "order": 2
+          },
+          {
+            "id": "83a40284-9fb2-4c3b-afca-d9da44348003",
+            "trackId": "36ebab4c-54e3-4f5e-befe-ce9a85e1db27",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘äÏ½ Ïº┘ä┘àÏ¬┘êÏ│ÏÀ",
+            "order": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cb320059-90fe-4148-a60b-58ea187fda74",
+    "name": "Ïº┘äÏ½Ïº┘å┘ê┘èÏ® Ïº┘äÏ╣Ïº┘àÏ®",
+    "order": 3,
+    "hasTracks": true,
+    "tracks": [
+      {
+        "id": "3660c448-8cfd-4e54-9b55-03cc8fdaa3da",
+        "stageId": "cb320059-90fe-4148-a60b-58ea187fda74",
+        "name": "┘àÏ│ÏºÏ▒ Ïº┘äÏ╣Ïº┘à",
+        "order": 0,
+        "grades": [
+          {
+            "id": "2af6092c-3d10-43b0-917b-f113477bc692",
+            "trackId": "3660c448-8cfd-4e54-9b55-03cc8fdaa3da",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘å┘è",
+            "order": 0
+          },
+          {
+            "id": "249b1bb8-084d-400b-915f-bb4fc3d805cf",
+            "trackId": "3660c448-8cfd-4e54-9b55-03cc8fdaa3da",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘äÏ½",
+            "order": 1
+          }
+        ]
+      },
+      {
+        "id": "a39bdcf8-dc2e-459c-a3b4-acd4b893a1a1",
+        "stageId": "cb320059-90fe-4148-a60b-58ea187fda74",
+        "name": "┘àÏ│ÏºÏ▒ Ïº┘äÏÁÏ¡Ï® ┘êÏº┘äÏ¡┘èÏºÏ®",
+        "order": 0,
+        "grades": [
+          {
+            "id": "b2cabe12-06a0-46b7-846a-52d47786a2c2",
+            "trackId": "a39bdcf8-dc2e-459c-a3b4-acd4b893a1a1",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘å┘è",
+            "order": 0
+          },
+          {
+            "id": "1698e2a9-c373-47e1-82e3-abb14b7a8796",
+            "trackId": "a39bdcf8-dc2e-459c-a3b4-acd4b893a1a1",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘äÏ½",
+            "order": 1
+          }
+        ]
+      },
+      {
+        "id": "e233b521-38be-4c86-873a-8f3c237f6835",
+        "stageId": "cb320059-90fe-4148-a60b-58ea187fda74",
+        "name": "┘àÏ│ÏºÏ▒ ÏÑÏ»ÏºÏ▒Ï® Ïº┘äÏúÏ╣┘àÏº┘ä",
+        "order": 0,
+        "grades": [
+          {
+            "id": "8f09a75c-2fe5-4657-9d77-e4901c75f0aa",
+            "trackId": "e233b521-38be-4c86-873a-8f3c237f6835",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘å┘è",
+            "order": 0
+          },
+          {
+            "id": "4bc0d8c5-9b6c-463b-b2d3-25a283fb4956",
+            "trackId": "e233b521-38be-4c86-873a-8f3c237f6835",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘äÏ½",
+            "order": 1
+          }
+        ]
+      },
+      {
+        "id": "fb84e0d9-3533-49cf-a5a1-e5bbe25fc759",
+        "stageId": "cb320059-90fe-4148-a60b-58ea187fda74",
+        "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏú┘ê┘ä┘ë ┘àÏ┤Ï¬Ï▒┘âÏ®",
+        "order": 0,
+        "grades": [
+          {
+            "id": "e90e1b7b-7e33-4508-91fe-baeb32764869",
+            "trackId": "fb84e0d9-3533-49cf-a5a1-e5bbe25fc759",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏú┘ê┘ä┘ë",
+            "order": 0
+          }
+        ]
+      },
+      {
+        "id": "25a878c9-55e4-48e5-b640-3cf8b7fff363",
+        "stageId": "cb320059-90fe-4148-a60b-58ea187fda74",
+        "name": "Ïº┘ä┘àÏ│ÏºÏ▒ Ïº┘äÏ┤Ï▒Ï╣┘è",
+        "order": 0,
+        "grades": [
+          {
+            "id": "a116890b-3656-4cc5-b60f-d1c26d94588e",
+            "trackId": "25a878c9-55e4-48e5-b640-3cf8b7fff363",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘å┘è",
+            "order": 0
+          },
+          {
+            "id": "77264c34-2891-4a6b-a8d6-072e355c7fef",
+            "trackId": "25a878c9-55e4-48e5-b640-3cf8b7fff363",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘äÏ½",
+            "order": 1
+          }
+        ]
+      },
+      {
+        "id": "d78e9eaf-d79e-4cc1-a252-49ee93baab3d",
+        "stageId": "cb320059-90fe-4148-a60b-58ea187fda74",
+        "name": "┘àÏ│ÏºÏ▒ Ï╣┘ä┘ê┘à Ï¡ÏºÏ│Ï¿ ┘êÏº┘ä┘ç┘åÏ»Ï│Ï®",
+        "order": 0,
+        "grades": [
+          {
+            "id": "02466ec2-a5e1-4d7e-aa74-b06b20992acf",
+            "trackId": "d78e9eaf-d79e-4cc1-a252-49ee93baab3d",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘å┘è",
+            "order": 0
+          },
+          {
+            "id": "54f1e55f-4c0b-468e-b2ec-da3cf8a971c2",
+            "trackId": "d78e9eaf-d79e-4cc1-a252-49ee93baab3d",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘äÏ½",
+            "order": 1
+          }
+        ]
+      },
+      {
+        "id": "9a96d9a3-aa02-49ed-866e-01e0c19b8a31",
+        "stageId": "cb320059-90fe-4148-a60b-58ea187fda74",
+        "name": "Ïº┘ä┘àÏ│ÏºÏ▒ Ïº┘äÏ╣┘ä┘à┘è ÔÇö Ï╣┘ä┘ê┘à ÏÀÏ¿┘èÏ╣┘èÏ®",
+        "order": 1,
+        "grades": [
+          {
+            "id": "8c65c25b-7a4f-48e5-839d-c8d3ff416c38",
+            "trackId": "9a96d9a3-aa02-49ed-866e-01e0c19b8a31",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏú┘ê┘ä┘ë Ï½Ïº┘å┘ê┘è",
+            "order": 1
+          },
+          {
+            "id": "2257f6fc-20bc-46eb-8cdb-04806e2b4c4b",
+            "trackId": "9a96d9a3-aa02-49ed-866e-01e0c19b8a31",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏ½Ïº┘å┘èÏ® Ï½Ïº┘å┘ê┘è",
+            "order": 2
+          },
+          {
+            "id": "b5285556-bc20-455a-8d5e-e4383be75519",
+            "trackId": "9a96d9a3-aa02-49ed-866e-01e0c19b8a31",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏ½Ïº┘äÏ½Ï® Ï½Ïº┘å┘ê┘è",
+            "order": 3
+          }
+        ]
+      },
+      {
+        "id": "e48a3987-f889-4ecd-875b-adc255b47759",
+        "stageId": "cb320059-90fe-4148-a60b-58ea187fda74",
+        "name": "Ïº┘ä┘àÏ│ÏºÏ▒ Ïº┘äÏ╣┘ä┘à┘è ÔÇö Ï▒┘èÏºÏÂ┘èÏºÏ¬",
+        "order": 2,
+        "grades": [
+          {
+            "id": "4f987eb2-7c41-4af4-a11f-746528aa3784",
+            "trackId": "e48a3987-f889-4ecd-875b-adc255b47759",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏú┘ê┘ä┘ë Ï½Ïº┘å┘ê┘è",
+            "order": 1
+          },
+          {
+            "id": "124d900b-84b3-4d70-86fc-e3a14a5a4582",
+            "trackId": "e48a3987-f889-4ecd-875b-adc255b47759",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏ½Ïº┘å┘èÏ® Ï½Ïº┘å┘ê┘è",
+            "order": 2
+          },
+          {
+            "id": "76d61208-e798-4f0d-a1a7-720df037abe2",
+            "trackId": "e48a3987-f889-4ecd-875b-adc255b47759",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏ½Ïº┘äÏ½Ï® Ï½Ïº┘å┘ê┘è",
+            "order": 3
+          }
+        ]
+      },
+      {
+        "id": "2dac0852-9a12-464e-b678-1d59692e3cd3",
+        "stageId": "cb320059-90fe-4148-a60b-58ea187fda74",
+        "name": "Ïº┘ä┘àÏ│ÏºÏ▒ Ïº┘äÏúÏ»Ï¿┘è",
+        "order": 3,
+        "grades": [
+          {
+            "id": "bec68bc6-a0d7-4bf1-9746-a4c12803d1b8",
+            "trackId": "2dac0852-9a12-464e-b678-1d59692e3cd3",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏú┘ê┘ä┘ë Ï½Ïº┘å┘ê┘è",
+            "order": 1
+          },
+          {
+            "id": "7d7dd6bf-8891-48a1-bd97-e82b4478a3d5",
+            "trackId": "2dac0852-9a12-464e-b678-1d59692e3cd3",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏ½Ïº┘å┘èÏ® Ï½Ïº┘å┘ê┘è",
+            "order": 2
+          },
+          {
+            "id": "d8749179-c6f3-41a5-838d-4dbe8dd6a4c0",
+            "trackId": "2dac0852-9a12-464e-b678-1d59692e3cd3",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏ½Ïº┘äÏ½Ï® Ï½Ïº┘å┘ê┘è",
+            "order": 3
+          }
+        ]
+      },
+      {
+        "id": "2ca4ca55-7053-4a3c-aef9-a897d3df1efa",
+        "stageId": "cb320059-90fe-4148-a60b-58ea187fda74",
+        "name": "ÏÑÏ»ÏºÏ▒Ï® ┘ê┘àÏ╣┘ä┘ê┘àÏºÏ¬┘èÏ®",
+        "order": 4,
+        "grades": [
+          {
+            "id": "e58c95fc-9772-44c3-b4cf-3f2f8638b012",
+            "trackId": "2ca4ca55-7053-4a3c-aef9-a897d3df1efa",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏú┘ê┘ä┘ë Ï½Ïº┘å┘ê┘è",
+            "order": 1
+          },
+          {
+            "id": "837cffc4-79b4-49b1-8c18-8707130aa907",
+            "trackId": "2ca4ca55-7053-4a3c-aef9-a897d3df1efa",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏ½Ïº┘å┘èÏ® Ï½Ïº┘å┘ê┘è",
+            "order": 2
+          },
+          {
+            "id": "ec2dd676-8e52-4036-909f-d10cc3c8e0e0",
+            "trackId": "2ca4ca55-7053-4a3c-aef9-a897d3df1efa",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏ½Ïº┘äÏ½Ï® Ï½Ïº┘å┘ê┘è",
+            "order": 3
+          }
+        ]
+      },
+      {
+        "id": "6297968d-225a-4bfb-a4d4-52b5b33aa75a",
+        "stageId": "cb320059-90fe-4148-a60b-58ea187fda74",
+        "name": "Ïº┘äÏÁÏ¡Ï® ┘êÏº┘äÏ¡┘èÏºÏ®",
+        "order": 5,
+        "grades": [
+          {
+            "id": "dc82e954-24ec-4015-94c2-0a371446ab27",
+            "trackId": "6297968d-225a-4bfb-a4d4-52b5b33aa75a",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏú┘ê┘ä┘ë Ï½Ïº┘å┘ê┘è",
+            "order": 1
+          },
+          {
+            "id": "db9aacf2-9929-4d2b-8baa-2f1a6374548f",
+            "trackId": "6297968d-225a-4bfb-a4d4-52b5b33aa75a",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏ½Ïº┘å┘èÏ® Ï½Ïº┘å┘ê┘è",
+            "order": 2
+          },
+          {
+            "id": "fa2b24c4-78cf-425d-a606-4e7eccb68229",
+            "trackId": "6297968d-225a-4bfb-a4d4-52b5b33aa75a",
+            "name": "Ïº┘äÏ│┘åÏ® Ïº┘äÏ½Ïº┘äÏ½Ï® Ï½Ïº┘å┘ê┘è",
+            "order": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "a2b3989a-9f7f-462b-a9db-c109b0feb97a",
+    "name": "Ïº┘äÏ¬Ï╣┘ä┘è┘à Ïº┘ä┘àÏ│Ï¬┘àÏ▒",
+    "order": 4,
+    "hasTracks": false,
+    "tracks": [
+      {
+        "id": "686eeae5-00a2-49b3-aeb0-db76e49b982b",
+        "stageId": "a2b3989a-9f7f-462b-a9db-c109b0feb97a",
+        "name": "┘àÏ│ÏºÏ▒ Ï╣Ïº┘à",
+        "order": 0,
+        "grades": [
+          {
+            "id": "d91386cc-54c0-4a18-90ad-e150a491eb90",
+            "trackId": "686eeae5-00a2-49b3-aeb0-db76e49b982b",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏú┘ê┘ä",
+            "order": 1
+          },
+          {
+            "id": "03564add-4c85-4ccd-90ac-52740922fe58",
+            "trackId": "686eeae5-00a2-49b3-aeb0-db76e49b982b",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘å┘è",
+            "order": 2
+          },
+          {
+            "id": "b0db9298-16ce-4e9c-a855-dd0223c3a67c",
+            "trackId": "686eeae5-00a2-49b3-aeb0-db76e49b982b",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘äÏ½",
+            "order": 3
+          }
+        ]
+      },
+      {
+        "id": "19066028-7d97-4bda-ab35-0aed9a99757d",
+        "stageId": "a2b3989a-9f7f-462b-a9db-c109b0feb97a",
+        "name": "Ï╣Ïº┘à",
+        "order": 0,
+        "grades": [
+          {
+            "id": "7602efb6-a29b-4be0-88d9-0d8ae02e03c9",
+            "trackId": "19066028-7d97-4bda-ab35-0aed9a99757d",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏú┘ê┘ä",
+            "order": 1
+          },
+          {
+            "id": "14f1ce85-48bf-4a8a-b20e-4e755d49eb8f",
+            "trackId": "19066028-7d97-4bda-ab35-0aed9a99757d",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘å┘è",
+            "order": 2
+          },
+          {
+            "id": "2faa80d9-4453-4721-bfd6-42fadf801f38",
+            "trackId": "19066028-7d97-4bda-ab35-0aed9a99757d",
+            "name": "Ïº┘äÏÁ┘ü Ïº┘äÏ½Ïº┘äÏ½",
+            "order": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "18b3d85c-349d-46a0-92fb-af219c5e83d3",
+    "name": "Ïº┘äÏ¬Ï▒Ï¿┘èÏ® Ïº┘äÏ«ÏºÏÁÏ®",
+    "order": 5,
+    "hasTracks": false,
+    "tracks": [
+      {
+        "id": "3d17f355-1d0c-4dec-9a0f-ed52f76bd3bb",
+        "stageId": "18b3d85c-349d-46a0-92fb-af219c5e83d3",
+        "name": "Ïº┘ä┘àÏ▒Ï¡┘äÏ® Ïº┘äÏºÏ¿Ï¬Ï»ÏºÏª┘èÏ®",
+        "order": 0,
+        "grades": [
+          {
+            "id": "c7c05dcb-40b3-468a-9c75-e6baa1a68b5a",
+            "trackId": "3d17f355-1d0c-4dec-9a0f-ed52f76bd3bb",
+            "name": "Ïú┘ê┘ä",
+            "order": 1
+          },
+          {
+            "id": "c679b491-27ad-489d-8b9d-6317119ad754",
+            "trackId": "3d17f355-1d0c-4dec-9a0f-ed52f76bd3bb",
+            "name": "Ï½Ïº┘å┘è",
+            "order": 2
+          },
+          {
+            "id": "bc8cdc1e-1538-46d0-9253-81fa075604bd",
+            "trackId": "3d17f355-1d0c-4dec-9a0f-ed52f76bd3bb",
+            "name": "Ï½Ïº┘äÏ½",
+            "order": 3
+          },
+          {
+            "id": "519fb3ad-1624-43f5-90b5-7a19b7afc6c0",
+            "trackId": "3d17f355-1d0c-4dec-9a0f-ed52f76bd3bb",
+            "name": "Ï▒ÏºÏ¿Ï╣",
+            "order": 4
+          },
+          {
+            "id": "9eed4e88-3145-4780-9eed-c01bc3b30f13",
+            "trackId": "3d17f355-1d0c-4dec-9a0f-ed52f76bd3bb",
+            "name": "Ï«Ïº┘àÏ│",
+            "order": 5
+          },
+          {
+            "id": "7c44ed35-bfdc-46fb-ae0e-1577bb1aafe8",
+            "trackId": "3d17f355-1d0c-4dec-9a0f-ed52f76bd3bb",
+            "name": "Ï│ÏºÏ»Ï│",
+            "order": 6
+          }
+        ]
+      },
+      {
+        "id": "aa97da5e-f408-4cfc-b204-4a2ad66d6e4c",
+        "stageId": "18b3d85c-349d-46a0-92fb-af219c5e83d3",
+        "name": "Ïº┘ä┘àÏ▒Ï¡┘äÏ® Ïº┘ä┘àÏ¬┘êÏ│ÏÀÏ®",
+        "order": 0,
+        "grades": [
+          {
+            "id": "0260d4d4-a57d-49ac-ae40-ef92beef9eca",
+            "trackId": "aa97da5e-f408-4cfc-b204-4a2ad66d6e4c",
+            "name": "Ïº┘ê┘ä",
+            "order": 1
+          },
+          {
+            "id": "51cb9d79-f943-4a5c-b0bc-9b551c8f8880",
+            "trackId": "aa97da5e-f408-4cfc-b204-4a2ad66d6e4c",
+            "name": "Ï½Ïº┘å┘è",
+            "order": 2
+          },
+          {
+            "id": "32461342-3a9a-4725-8121-85cf9e8c977d",
+            "trackId": "aa97da5e-f408-4cfc-b204-4a2ad66d6e4c",
+            "name": "Ï½Ïº┘äÏ½",
+            "order": 3
+          }
+        ]
+      },
+      {
+        "id": "722d4920-fdc0-43fc-8fcf-478a88ce94d4",
+        "stageId": "18b3d85c-349d-46a0-92fb-af219c5e83d3",
+        "name": "Ïº┘ä┘àÏ▒Ï¡┘äÏ® Ïº┘äÏ¬Ïú┘ç┘è┘ä┘èÏ®",
+        "order": 0,
+        "grades": [
+          {
+            "id": "a75a3a92-3ba9-4549-8d95-c702c0e94da5",
+            "trackId": "722d4920-fdc0-43fc-8fcf-478a88ce94d4",
+            "name": "Ïº┘ê┘ä",
+            "order": 1
+          },
+          {
+            "id": "e71c3966-c519-46eb-89fa-116c9f750455",
+            "trackId": "722d4920-fdc0-43fc-8fcf-478a88ce94d4",
+            "name": "Ï½Ïº┘å┘è",
+            "order": 2
+          },
+          {
+            "id": "8d8cdc0d-a2a6-4854-b9db-c31a91a65013",
+            "trackId": "722d4920-fdc0-43fc-8fcf-478a88ce94d4",
+            "name": "Ï½Ïº┘äÏ½",
+            "order": 3
+          }
+        ]
+      },
+      {
+        "id": "37ada56d-853f-4f22-bc2c-47c7213976a1",
+        "stageId": "18b3d85c-349d-46a0-92fb-af219c5e83d3",
+        "name": "Ï»┘ä┘è┘ä Ïº┘ä┘àÏ╣┘ä┘à Ïº┘ä┘àÏ▒Ï¼Ï╣┘è ┘ä┘à┘åÏº┘çÏ¼ Ïº┘äÏ¬Ï▒Ï¿┘èÏ® Ïº┘äÏ«ÏºÏÁÏ®",
+        "order": 0,
+        "grades": [
+          {
+            "id": "f4d4cf3f-564c-4b93-bd76-0536324fab7c",
+            "trackId": "37ada56d-853f-4f22-bc2c-47c7213976a1",
+            "name": "Ï╣Ïº┘à",
+            "order": 1
+          }
+        ]
+      },
+      {
+        "id": "05e6cc6d-0f0c-4148-952f-fab2e127b315",
+        "stageId": "18b3d85c-349d-46a0-92fb-af219c5e83d3",
+        "name": "Ï╣Ïº┘à",
+        "order": 0,
+        "grades": [
+          {
+            "id": "73ffa856-d69a-4b4e-9a4a-e8a9ac4a2caf",
+            "trackId": "05e6cc6d-0f0c-4148-952f-fab2e127b315",
+            "name": "Ïº┘ä┘àÏ▒Ï¡┘äÏ® Ïº┘äÏºÏ¿Ï¬Ï»ÏºÏª┘èÏ® Ïº┘äÏ¬Ïú┘ç┘è┘ä┘èÏ®",
+            "order": 1
+          },
+          {
+            "id": "757b1ad8-4d43-41ed-bdd7-dcac106ccb95",
+            "trackId": "05e6cc6d-0f0c-4148-952f-fab2e127b315",
+            "name": "Ïº┘ä┘àÏ▒Ï¡┘äÏ® Ïº┘ä┘àÏ¬┘êÏ│ÏÀÏ® Ïº┘äÏ¬Ïú┘ç┘è┘ä┘èÏ®",
+            "order": 2
+          },
+          {
+            "id": "9674adc8-259d-4e71-a030-4d9b47d27172",
+            "trackId": "05e6cc6d-0f0c-4148-952f-fab2e127b315",
+            "name": "Ïº┘ä┘àÏ▒Ï¡┘äÏ® Ïº┘äÏ½Ïº┘å┘ê┘èÏ® Ïº┘äÏ¬Ïú┘ç┘è┘ä┘èÏ®",
+            "order": 3
+          },
+          {
+            "id": "d526b383-89d5-4d2e-85da-358d4b17680a",
+            "trackId": "05e6cc6d-0f0c-4148-952f-fab2e127b315",
+            "name": "Ï»┘ä┘è┘ä Ïº┘ä┘àÏ╣┘ä┘à Ïº┘ä┘àÏ▒Ï┤Ï»",
+            "order": 4
+          }
+        ]
+      }
+    ]
+  }
+]
