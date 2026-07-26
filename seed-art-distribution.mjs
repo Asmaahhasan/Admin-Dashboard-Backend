@@ -206,7 +206,16 @@ async function main() {
         startDateHijri: w.startDateHijri,
         endDateHijri: w.endDateHijri,
         weekType: w.isHoliday ? 'HOLIDAY' : 'LESSON',
-        uploadedById: admin.id
+        uploadedById: admin.id,
+        weekDays: {
+          create: [
+            { dayOfWeek: 'الأحد', type: w.isHoliday ? 'HOLIDAY' : 'LESSON', order: 0 },
+            { dayOfWeek: 'الاثنين', type: w.isHoliday ? 'HOLIDAY' : 'LESSON', order: 1 },
+            { dayOfWeek: 'الثلاثاء', type: w.isHoliday ? 'HOLIDAY' : 'LESSON', order: 2 },
+            { dayOfWeek: 'الأربعاء', type: w.isHoliday ? 'HOLIDAY' : 'LESSON', order: 3 },
+            { dayOfWeek: 'الخميس', type: w.isHoliday ? 'HOLIDAY' : 'LESSON', order: 4 },
+          ]
+        }
       }
     });
   }

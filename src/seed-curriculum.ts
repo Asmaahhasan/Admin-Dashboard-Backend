@@ -1,5 +1,9 @@
 import { PrismaClient } from '@prisma/client';
+import dotenv from 'dotenv';
+
+dotenv.config();
 const prisma = new PrismaClient();
+const baseUrl = process.env.BASE_URL || 'http://localhost:4001';
 
 async function main() {
   console.log('🧹 Cleaning old curriculum data...');
@@ -215,7 +219,16 @@ async function main() {
           gradeSubjectId: gs.id,
           weekNumber: w.num,
           title: w.title,
-          uploadedById: admin.id
+          uploadedById: admin.id,
+          weekDays: {
+            create: [
+              { dayOfWeek: 'الأحد', type: 'LESSON', order: 0 },
+              { dayOfWeek: 'الاثنين', type: 'LESSON', order: 1 },
+              { dayOfWeek: 'الثلاثاء', type: 'LESSON', order: 2 },
+              { dayOfWeek: 'الأربعاء', type: 'LESSON', order: 3 },
+              { dayOfWeek: 'الخميس', type: 'LESSON', order: 4 },
+            ]
+          }
         }
       });
 
@@ -243,7 +256,7 @@ async function main() {
           lessonActivityId: activity.id,
           type: 'PRESENTATION',
           title: `عرض بوربوينت لدرس ${w.title}`,
-          url: 'http://localhost:4001/uploads/sample-math-pres.pptx'
+          url: `${baseUrl}/uploads/sample-math-pres.pptx`
         }
       });
     }

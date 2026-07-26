@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
@@ -11,7 +11,6 @@ async function main() {
     console.log(`Week #${w.weekNumber} [${w.id}] -> title: "${w.title}" | Hijri: ${JSON.stringify(w.startDateHijri)} | Greg: ${JSON.stringify(w.endDateHijri)}`);
   });
 
-  // Also fix ANY null dates
   const nullWeeks = weeks.filter(w => !w.startDateHijri || !w.endDateHijri);
   console.log('Null weeks count:', nullWeeks.length);
 
@@ -22,11 +21,10 @@ async function main() {
     const endDate = new Date(startDate.getTime() + 4 * 24 * 60 * 60 * 1000);
     const fd = (d) => d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
     const g = 'من ' + fd(startDate) + ' إلى ' + fd(endDate) + ' م';
-    const h = 'من -- إلى --';
 
     await prisma.syllabusWeek.update({
       where: { id: w.id },
-      data: { startDateHijri: h, endDateHijri: g },
+      data: { startDateHijri: 'من 8-9 إلى 12-9-1448 هـ', endDateHijri: g },
     });
     console.log(`FIXED week #${w.weekNumber}`);
   }

@@ -1,5 +1,19 @@
+# Dependencies
 node_modules/
+
+# Build
 dist/
+
+# Environment
 .env
 .env.*
+
+# Logs
 *.log
+*_errors.txt
+
+# Uploads
+uploads/
+
+# IDE
+.vscode/
