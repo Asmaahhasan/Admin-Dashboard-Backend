@@ -639,48 +639,50 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
             display: grid;
             grid-template-columns: 1fr 2fr 1fr;
             align-items: center;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%);
-            color: #ffffff;
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+            color: #0f172a;
             padding: 18px 24px;
             border-radius: 16px;
             margin-bottom: 18px;
-            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
-            border-bottom: 3px solid #f59e0b;
+            border: 2px solid #059669;
+            border-bottom: 4px solid #d97706;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.08);
           }
-          .ps-header-side.right { font-size: 13px; font-weight: 800; color: #f8fafc; }
-          .ps-header-center h1 { margin: 0; font-size: 21px; font-weight: 900; color: #ffffff; text-align: center; letter-spacing: -0.3px; }
-          .ps-header-center p { margin: 6px 0 0 0; font-size: 14px; font-weight: 800; color: #38bdf8; text-align: center; }
+          .ps-header-side.right { font-size: 13px; font-weight: 800; color: #065f46; }
+          .ps-header-center h1 { margin: 0; font-size: 22px; font-weight: 900; color: #064e3b; text-align: center; letter-spacing: -0.3px; }
+          .ps-header-center p { margin: 6px 0 0 0; font-size: 13.5px; font-weight: 800; color: #0d9488; text-align: center; }
           .ps-moe-logo span { display: block; line-height: 1.4; }
           .ps-info-bar {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
-            background: #f8fafc;
-            border: 1.5px solid #cbd5e1;
+            background: linear-gradient(to left, #f0fdf4, #f0f9ff, #fffbeb);
+            border: 1.5px solid #0284c7;
             border-radius: 12px;
             padding: 12px 18px;
             margin-bottom: 20px;
             text-align: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.05);
           }
-          .ps-info-item { border-left: 1px solid #e2e8f0; }
+          .ps-info-item { border-left: 1px solid #cbd5e1; }
           .ps-info-item:last-child { border-left: none; }
-          .ps-info-label { font-size: 11.5px; font-weight: 700; color: #64748b; }
+          .ps-info-label { font-size: 11.5px; font-weight: 700; color: #0369a1; }
           .ps-info-val { font-size: 13.5px; font-weight: 900; color: #0f172a; display: block; margin-top: 3px; }
           .ps-weeks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
-          .ps-week-card { border: 1.5px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #ffffff; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04); }
-          .ps-week-card.is-holiday { border-color: #f43f5e; background: #fff1f2; }
-          .ps-week-card.is-exam { border-color: #f59e0b; background: #fffbeb; }
-          .ps-week-head { background: #0f172a; color: #38bdf8; padding: 7px 10px; font-weight: 900; font-size: 12.5px; text-align: center; border-bottom: 1.5px solid #cbd5e1; }
-          .ps-week-card.is-holiday .ps-week-head { background: #e11d48; color: #ffffff; border-color: #f43f5e; }
-          .ps-week-card.is-exam .ps-week-head { background: #d97706; color: #ffffff; border-color: #f59e0b; }
+          .ps-week-card { border: 1.5px solid #bfdbfe; border-radius: 12px; overflow: hidden; background: #ffffff; display: flex; flex-direction: column; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04); }
+          .ps-week-card.is-holiday { border: 2px solid #f97316; background: #fff8e6; }
+          .ps-week-card.is-exam { border: 2px solid #eab308; background: #fefce8; }
+          .ps-week-head { background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%); color: #ffffff; padding: 7px 10px; font-weight: 900; font-size: 12.5px; text-align: center; border-bottom: 2px solid #3b82f6; }
+          .ps-week-card.is-holiday .ps-week-head { background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); color: #ffffff; border-color: #f97316; }
+          .ps-week-card.is-exam .ps-week-head { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); color: #ffffff; border-color: #f59e0b; }
           .ps-week-body { padding: 10px; font-size: 11px; flex: 1; display: flex; flex-direction: column; gap: 5px; }
-          .ps-card-dates { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 6px; font-size: 10px; color: #334155; text-align: center; font-weight: 800; margin-bottom: 4px; }
-          .ps-national-badge { background: linear-gradient(135deg, #fff1f2 0%, #fef3c7 100%); color: #991b1b; padding: 5px 8px; border-radius: 6px; border: 1px solid #f87171; font-size: 10.5px; font-weight: 900; text-align: center; margin-bottom: 4px; }
+          .ps-card-dates { background: #f0f9ff; border: 1px solid #7dd3fc; border-radius: 6px; padding: 5px 6px; font-size: 10px; color: #0369a1; text-align: center; font-weight: 800; margin-bottom: 4px; line-height: 1.45; }
+          .ps-national-badge { background: linear-gradient(135deg, #fff1f2 0%, #fee2e2 100%); color: #991b1b; padding: 6px 8px; border-radius: 8px; border: 1.5px solid #f87171; font-size: 10.5px; font-weight: 900; text-align: center; margin: 3px 0; box-shadow: 0 2px 6px rgba(248,113,113,0.15); }
+          .ps-exam-badge { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); color: #92400e; padding: 6px 8px; border-radius: 8px; border: 1.5px solid #f59e0b; font-size: 10.5px; font-weight: 900; text-align: center; margin: 3px 0; box-shadow: 0 2px 6px rgba(245,158,11,0.15); }
           .ps-week-item { display: flex; gap: 5px; font-size: 11px; font-weight: 700; color: #1e293b; line-height: 1.4; align-items: baseline; }
-          .ps-item-bullet { color: #f59e0b; font-weight: 900; }
+          .ps-item-bullet { color: #d97706; font-weight: 900; }
           .ps-footer { display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 24px; padding-top: 16px; border-top: 2px dashed #94a3b8; text-align: center; font-weight: 800; color: #334155; font-size: 12px; }
-          .ps-footer-copyright { margin-top: 14px; padding: 8px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; text-align: center; font-size: 10.5px; font-weight: 700; color: #64748b; grid-column: span 3; }
+          .ps-footer-copyright { margin-top: 14px; padding: 8px 16px; background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 8px; text-align: center; font-size: 10.5px; font-weight: 700; color: #475569; grid-column: span 3; }
           @page { size: A4 landscape; margin: 8mm; }
         </style>
       </head>
