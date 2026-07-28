@@ -604,27 +604,53 @@ app.post('/api/syllabus-weeks/export-pdf', async (req, res) => {
         <style>
           * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
           body { margin: 0; padding: 20px; background: #ffffff; color: #000000; direction: rtl; }
-          .printable-syllabus-sheet { background: #fff; color: #000; direction: rtl; }
-          .ps-header { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #0284c7; padding-bottom: 16px; margin-bottom: 16px; }
-          .ps-header-side.right { font-size: 12px; font-weight: 700; color: #475569; }
-          .ps-header-center h1 { margin: 0; font-size: 20px; font-weight: 800; color: #0f172a; text-align: center; }
-          .ps-header-center p { margin: 4px 0 0 0; font-size: 14px; font-weight: 700; color: #0d9488; text-align: center; }
-          .ps-info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; background: #f8fafc; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #e2e8f0; text-align: center; }
-          .ps-info-label { font-size: 12px; font-weight: 700; color: #64748b; }
-          .ps-info-val { font-size: 13px; font-weight: 800; color: #0f172a; display: block; margin-top: 2px; }
-          .ps-weeks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
-          .ps-week-card { border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; background: #ffffff; }
-          .ps-week-card.is-holiday { border-color: #fca5a5; background: #fff1f2; }
-          .ps-week-card.is-exam { border-color: #fde047; background: #fefce8; }
-          .ps-week-head { background: #0284c7; color: #ffffff; padding: 6px 8px; font-weight: 800; font-size: 12px; text-align: center; }
-          .ps-week-card.is-holiday .ps-week-head { background: #e11d48; }
-          .ps-week-card.is-exam .ps-week-head { background: #ca8a04; }
-          .ps-week-body { padding: 8px; font-size: 11px; }
-          .ps-card-dates { font-size: 10px; color: #64748b; margin-bottom: 6px; text-align: center; font-weight: 600; }
-          .ps-national-badge { background: #fee2e2; color: #991b1b; padding: 4px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; text-align: center; margin-bottom: 6px; }
-          .ps-week-item { display: flex; gap: 4px; font-size: 11px; font-weight: 600; color: #1e293b; margin-bottom: 3px; }
-          .ps-item-bullet { color: #0284c7; font-weight: 800; }
-          .ps-footer { display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 24px; padding-top: 16px; border-top: 2px solid #0284c7; text-align: center; }
+          .printable-syllabus-sheet { background: #fff; color: #0f172a; direction: rtl; }
+          .ps-header {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%);
+            color: #ffffff;
+            padding: 18px 24px;
+            border-radius: 16px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
+            border-bottom: 3px solid #f59e0b;
+          }
+          .ps-header-side.right { font-size: 13px; font-weight: 800; color: #f8fafc; }
+          .ps-header-center h1 { margin: 0; font-size: 21px; font-weight: 900; color: #ffffff; text-align: center; letter-spacing: -0.3px; }
+          .ps-header-center p { margin: 6px 0 0 0; font-size: 14px; font-weight: 800; color: #38bdf8; text-align: center; }
+          .ps-moe-logo span { display: block; line-height: 1.4; }
+          .ps-info-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 12px 18px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+          }
+          .ps-info-item { border-left: 1px solid #e2e8f0; }
+          .ps-info-item:last-child { border-left: none; }
+          .ps-info-label { font-size: 11.5px; font-weight: 700; color: #64748b; }
+          .ps-info-val { font-size: 13.5px; font-weight: 900; color: #0f172a; display: block; margin-top: 3px; }
+          .ps-weeks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+          .ps-week-card { border: 1.5px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #ffffff; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04); }
+          .ps-week-card.is-holiday { border-color: #f43f5e; background: #fff1f2; }
+          .ps-week-card.is-exam { border-color: #f59e0b; background: #fffbeb; }
+          .ps-week-head { background: #0f172a; color: #38bdf8; padding: 7px 10px; font-weight: 900; font-size: 12.5px; text-align: center; border-bottom: 1.5px solid #cbd5e1; }
+          .ps-week-card.is-holiday .ps-week-head { background: #e11d48; color: #ffffff; border-color: #f43f5e; }
+          .ps-week-card.is-exam .ps-week-head { background: #d97706; color: #ffffff; border-color: #f59e0b; }
+          .ps-week-body { padding: 10px; font-size: 11px; flex: 1; display: flex; flex-direction: column; gap: 5px; }
+          .ps-card-dates { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 6px; font-size: 10px; color: #334155; text-align: center; font-weight: 800; margin-bottom: 4px; }
+          .ps-national-badge { background: linear-gradient(135deg, #fff1f2 0%, #fef3c7 100%); color: #991b1b; padding: 5px 8px; border-radius: 6px; border: 1px solid #f87171; font-size: 10.5px; font-weight: 900; text-align: center; margin-bottom: 4px; }
+          .ps-week-item { display: flex; gap: 5px; font-size: 11px; font-weight: 700; color: #1e293b; line-height: 1.4; align-items: baseline; }
+          .ps-item-bullet { color: #f59e0b; font-weight: 900; }
+          .ps-footer { display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 24px; padding-top: 16px; border-top: 2px dashed #94a3b8; text-align: center; font-weight: 800; color: #334155; font-size: 12px; }
+          .ps-footer-copyright { margin-top: 14px; padding: 8px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; text-align: center; font-size: 10.5px; font-weight: 700; color: #64748b; grid-column: span 3; }
           @page { size: A4 landscape; margin: 8mm; }
         </style>
       </head>
