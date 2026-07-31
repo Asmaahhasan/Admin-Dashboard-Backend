@@ -664,6 +664,62 @@ const handleDeleteGradeSubject = async (req: Request, res: Response) => {
 app.delete('/api/grade-subject/:id', authenticateToken, handleDeleteGradeSubject);
 app.delete('/api/grade-subjects/:id', authenticateToken, handleDeleteGradeSubject);
 
+app.put('/api/subjects/:id', authenticateToken, async (req: Request, res: Response) => {
+  const { name } = req.body;
+  if (!name) return res.status(400).json({ error: 'اسم المادة مطلوب' });
+
+  if (isDbConnected) {
+    try {
+      const sub = await prisma.subject.update({
+        where: { id: req.params.id },
+        data: { name: name.trim() },
+      });
+      return res.json(sub);
+    } catch { }
+  }
+
+  const sub = inMemoryStore.subjects.find((s) => s.id === req.params.id);
+  if (sub) {
+    sub.name = name.trim();
+    return res.json(sub);
+  }
+  return res.status(404).json({ error: 'المادة غير موجودة' });
+});
+
+const handleUpdateGradeSubject = async (req: Request, res: Response) => {
+  const { name } = req.body;
+  if (!name) return res.status(400).json({ error: 'اسم المادة مطلوب' });
+
+  if (isDbConnected) {
+    try {
+      const gs = await prisma.gradeSubject.findUnique({
+        where: { id: req.params.id },
+        include: { subject: true },
+      });
+      if (gs) {
+        const updatedSub = await prisma.subject.update({
+          where: { id: gs.subjectId },
+          data: { name: name.trim() },
+        });
+        return res.json({ gradeSubjectId: gs.id, subjectId: updatedSub.id, name: updatedSub.name });
+      }
+    } catch { }
+  }
+
+  const gs = inMemoryStore.gradeSubjects.find((g) => g.id === req.params.id);
+  if (gs) {
+    const sub = inMemoryStore.subjects.find((s) => s.id === gs.subjectId);
+    if (sub) {
+      sub.name = name.trim();
+    }
+    return res.json({ gradeSubjectId: gs.id, subjectId: gs.subjectId, name: name.trim() });
+  }
+  return res.status(404).json({ error: 'المادة غير موجودة' });
+};
+
+app.put('/api/grade-subject/:id', authenticateToken, handleUpdateGradeSubject);
+app.put('/api/grade-subjects/:id', authenticateToken, handleUpdateGradeSubject);
+
 // -------------------- SYLLABUS WEEKS --------------------
 
 app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) => {
