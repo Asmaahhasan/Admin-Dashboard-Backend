@@ -13,6 +13,7 @@ const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const client_1 = require("@prisma/client");
 const puppeteer_1 = __importDefault(require("puppeteer"));
+const logo_b64_1 = require("./logo-b64");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 4001;
@@ -674,7 +675,9 @@ app.post('/api/syllabus-weeks/export-pdf', async (req, res) => {
         };
         const browser = await puppeteer_1.default.launch(launchOptions);
         const page = await browser.newPage();
-        const cleanHtml = String(html).replace(/src="\/([^"]+)"/g, 'src="https://admin.wsyelhi.com/$1"');
+        let cleanHtml = String(html)
+            .replace(/src="[^"]*wsylh-logo[^"]*"/g, `src="${logo_b64_1.LOGO_BASE64}"`)
+            .replace(/src="\/([^"]+)"/g, 'src="https://admin.wsyelhi.com/$1"');
         const fullPageHtml = `
       <!DOCTYPE html>
       <html lang="ar" dir="rtl">

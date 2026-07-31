@@ -8,6 +8,7 @@ import path from 'path';
 import fs from 'fs';
 import { PrismaClient } from '@prisma/client';
 import puppeteer from 'puppeteer';
+import { LOGO_BASE64 } from './logo-b64';
 
 dotenv.config();
 
@@ -709,7 +710,9 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
     const browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
 
-    const cleanHtml = String(html).replace(/src="\/([^"]+)"/g, 'src="https://admin.wsyelhi.com/$1"');
+    let cleanHtml = String(html)
+      .replace(/src="[^"]*wsylh-logo[^"]*"/g, `src="${LOGO_BASE64}"`)
+      .replace(/src="\/([^"]+)"/g, 'src="https://admin.wsyelhi.com/$1"');
 
     const fullPageHtml = `
       <!DOCTYPE html>
