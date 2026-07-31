@@ -662,12 +662,17 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
   try {
     const systemChromePaths = [
       process.env.PUPPETEER_EXECUTABLE_PATH,
+      '/usr/bin/google-chrome-stable',
+      '/usr/bin/google-chrome',
+      '/usr/bin/chromium-browser',
+      '/usr/bin/chromium',
+      '/snap/bin/chromium',
       'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
       'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
       'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
       'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
     ];
-    let executablePath = systemChromePaths.find(p => p && require('fs').existsSync(p));
+    let executablePath = systemChromePaths.find(p => p && fs.existsSync(p));
 
     const launchOptions: any = {
       headless: true,
