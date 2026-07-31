@@ -611,7 +611,16 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
   if (!html) return res.status(400).json({ error: 'محتوى HTML مطلوب' });
 
   try {
-    const browser = await puppeteer.launch({
+    const systemChromePaths = [
+      process.env.PUPPETEER_EXECUTABLE_PATH,
+      'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+      'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+      'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+      'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+    ];
+    let executablePath = systemChromePaths.find(p => p && require('fs').existsSync(p));
+
+    const launchOptions: any = {
       headless: true,
       args: [
         '--no-sandbox',
@@ -622,7 +631,12 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
         '--no-zygote',
         '--single-process'
       ],
-    });
+    };
+    if (executablePath) {
+      launchOptions.executablePath = executablePath;
+    }
+
+    const browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
 
     const fullPageHtml = `
@@ -633,57 +647,96 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
         <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
         <style>
           * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-          body { margin: 0; padding: 20px; background: #ffffff; color: #000000; direction: rtl; }
-          .printable-syllabus-sheet { background: #fff; color: #0f172a; direction: rtl; }
+          html, body { margin: 0; padding: 0; background: #ffffff; color: #000000; direction: rtl; width: 100%; height: 100vh; overflow: hidden; box-sizing: border-box; }
+          .printable-sheet { height: 100vh !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; padding: 3mm 4mm !important; box-sizing: border-box !important; background: #ffffff !important; width: 100% !important; max-width: 100% !important; }
           .ps-header {
             display: grid;
             grid-template-columns: 1fr 2fr 1fr;
             align-items: center;
             background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
             color: #0f172a;
-            padding: 18px 24px;
-            border-radius: 16px;
-            margin-bottom: 18px;
-            border: 2px solid #059669;
-            border-bottom: 4px solid #d97706;
-            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.08);
+            padding: 6px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            border: 1.5px solid #0f766e;
+            border-bottom: 3px solid #0f766e;
           }
-          .ps-header-side.right { font-size: 13px; font-weight: 800; color: #065f46; }
-          .ps-header-center h1 { margin: 0; font-size: 22px; font-weight: 900; color: #064e3b; text-align: center; letter-spacing: -0.3px; }
-          .ps-header-center p { margin: 6px 0 0 0; font-size: 13.5px; font-weight: 800; color: #0d9488; text-align: center; }
-          .ps-moe-logo span { display: block; line-height: 1.4; }
+          .ps-header-side.right { font-size: 11px; font-weight: 800; color: #0f766e; }
+          .ps-header-center h1 { margin: 0; font-size: 15px; font-weight: 900; color: #0f766e; text-align: center; letter-spacing: -0.3px; }
+          .ps-header-center p { margin: 2px 0 0 0; font-size: 10px; font-weight: 800; color: #0d9488; text-align: center; }
+          .ps-moe-logo span { display: block; line-height: 1.3; }
           .ps-info-bar {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            background: linear-gradient(to left, #f0fdf4, #f0f9ff, #fffbeb);
-            border: 1.5px solid #0284c7;
-            border-radius: 12px;
-            padding: 12px 18px;
-            margin-bottom: 20px;
+            gap: 4px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 5px 10px;
+            margin-bottom: 6px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.05);
           }
           .ps-info-item { border-left: 1px solid #cbd5e1; }
           .ps-info-item:last-child { border-left: none; }
-          .ps-info-label { font-size: 11.5px; font-weight: 700; color: #0369a1; }
-          .ps-info-val { font-size: 13.5px; font-weight: 900; color: #0f172a; display: block; margin-top: 3px; }
-          .ps-weeks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
-          .ps-week-card { border: 1.5px solid #bfdbfe; border-radius: 12px; overflow: hidden; background: #ffffff; display: flex; flex-direction: column; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04); }
-          .ps-week-card.is-holiday { border: 2px solid #f97316; background: #fff8e6; }
-          .ps-week-card.is-exam { border: 2px solid #eab308; background: #fefce8; }
-          .ps-week-head { background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%); color: #ffffff; padding: 7px 10px; font-weight: 900; font-size: 12.5px; text-align: center; border-bottom: 2px solid #3b82f6; }
-          .ps-week-card.is-holiday .ps-week-head { background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); color: #ffffff; border-color: #f97316; }
-          .ps-week-card.is-exam .ps-week-head { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); color: #ffffff; border-color: #f59e0b; }
-          .ps-week-body { padding: 10px; font-size: 11px; flex: 1; display: flex; flex-direction: column; gap: 5px; }
-          .ps-card-dates { background: #f0f9ff; border: 1px solid #7dd3fc; border-radius: 6px; padding: 5px 6px; font-size: 10px; color: #0369a1; text-align: center; font-weight: 800; margin-bottom: 4px; line-height: 1.45; }
-          .ps-national-badge { background: linear-gradient(135deg, #fff1f2 0%, #fee2e2 100%); color: #991b1b; padding: 6px 8px; border-radius: 8px; border: 1.5px solid #f87171; font-size: 10.5px; font-weight: 900; text-align: center; margin: 3px 0; box-shadow: 0 2px 6px rgba(248,113,113,0.15); }
-          .ps-exam-badge { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); color: #92400e; padding: 6px 8px; border-radius: 8px; border: 1.5px solid #f59e0b; font-size: 10.5px; font-weight: 900; text-align: center; margin: 3px 0; box-shadow: 0 2px 6px rgba(245,158,11,0.15); }
-          .ps-week-item { display: flex; gap: 5px; font-size: 11px; font-weight: 700; color: #1e293b; line-height: 1.4; align-items: baseline; }
-          .ps-item-bullet { color: #d97706; font-weight: 900; }
-          .ps-footer { display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 24px; padding-top: 16px; border-top: 2px dashed #94a3b8; text-align: center; font-weight: 800; color: #334155; font-size: 12px; }
-          .ps-footer-copyright { margin-top: 14px; padding: 8px 16px; background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 8px; text-align: center; font-size: 10.5px; font-weight: 700; color: #475569; grid-column: span 3; }
-          @page { size: A4 landscape; margin: 8mm; }
+          .ps-info-label { font-size: 9.5px; font-weight: 700; color: #64748b; }
+          .ps-info-val { font-size: 11px; font-weight: 900; color: #0f766e; display: block; margin-top: 1px; }
+          .ps-weeks-grid {
+            flex: 1 !important;
+            display: grid !important;
+            grid-template-columns: repeat(6, 1fr) !important;
+            grid-template-rows: repeat(4, 1fr) !important;
+            gap: 5px !important;
+            margin-bottom: 6px !important;
+            width: 100% !important;
+          }
+          .ps-week-card {
+            height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            border: 1.5px solid #bfdbfe;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: none;
+          }
+          .ps-week-card.is-holiday { border: 1.5px solid #fca5a5 !important; background: #fff1f2 !important; }
+          .ps-week-card.is-exam { border: 1.5px solid #fde68a !important; background: #fffbeb !important; }
+          .ps-week-head { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: #ffffff; padding: 4px 5px; font-weight: 900; font-size: 10.5px; text-align: center; border-bottom: 1.5px solid #93c5fd; }
+          .ps-week-card.is-holiday .ps-week-head { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: #ffffff; border-color: #fca5a5; }
+          .ps-week-card.is-exam .ps-week-head { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff; border-color: #fde68a; }
+          .ps-week-body {
+            padding: 5px 6px !important;
+            font-size: 9.5px !important;
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-start !important;
+            gap: 4px !important;
+          }
+          .ps-card-dates { background: #f0f9ff; border: 1px solid #7dd3fc; border-radius: 5px; padding: 2px 4px; font-size: 8.5px; color: #0369a1; text-align: center; font-weight: 800; margin-bottom: 2px; line-height: 1.3; }
+          .ps-national-badge {
+            background: #fff1f2 !important;
+            color: #9f1239 !important;
+            padding: 5px 6px !important;
+            border-radius: 8px !important;
+            border: 1.5px solid #fecdd3 !important;
+            font-size: 9.5px !important;
+            font-weight: 800 !important;
+            text-align: center !important;
+            margin: 2px 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 4px !important;
+            line-height: 1.3 !important;
+          }
+          .ps-exam-badge { background: #fffbeb !important; color: #92400e !important; padding: 4px 6px !important; border-radius: 6px !important; border: 1.5px solid #fde68a !important; font-size: 9px !important; font-weight: 800 !important; text-align: center !important; margin: 2px 0 !important; }
+          .ps-week-item { display: flex; gap: 4px; font-size: 9px; font-weight: 700; color: #1e293b; line-height: 1.3; alignItems: baseline; }
+          .ps-item-bullet { color: #d97706; font-weight: 900; font-size: 8px; }
+          .ps-footer-table { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 6px; padding: 6px 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 10px; font-weight: 800; color: #1e293b; width: 100%; }
+          .ps-footer-copyright { display: flex !important; align-items: center !important; justify-content: center !important; margin-top: 4px !important; padding: 3px 6px !important; font-size: 8.5px !important; font-weight: 700 !important; color: #64748b !important; border-top: 1px dashed #cbd5e1 !important; }
+          @page { size: A4 landscape; margin: 0mm; }
         </style>
       </head>
       <body>
@@ -692,21 +745,25 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
       </html>
     `;
 
-    await page.setContent(fullPageHtml, { waitUntil: 'networkidle0' as any });
+    await page.setContent(fullPageHtml, { waitUntil: 'domcontentloaded' as any });
     await page.evaluateHandle('document.fonts.ready').catch(() => {});
 
     const pdfBuffer = await page.pdf({
       format: 'A4',
       landscape: true,
       printBackground: true,
-      margin: { top: '8mm', right: '8mm', bottom: '8mm', left: '8mm' },
+      pageRanges: '1',
+      margin: { top: '2mm', right: '2mm', bottom: '2mm', left: '2mm' },
     });
 
     await browser.close();
 
+    const cleanTitle = (title || 'توزيع المنهج الدراسي').replace(/[\\/:*?"<>|]/g, '').trim();
+    const buffer = Buffer.from(pdfBuffer);
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(title || 'syllabus-distribution')}.pdf"`);
-    return res.send(pdfBuffer);
+    res.setHeader('Content-Length', buffer.length);
+    res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(cleanTitle)}.pdf"; filename*=UTF-8''${encodeURIComponent(cleanTitle)}.pdf`);
+    return res.end(buffer);
   } catch (err: any) {
     console.error('Puppeteer PDF error:', err);
     return res.status(500).json({ error: 'فشل إنشاء PDF بواسطة Puppeteer: ' + err.message });
@@ -723,13 +780,19 @@ app.get('/api/syllabus-weeks', async (req: Request, res: Response) => {
       const weeks = await prisma.syllabusWeek.findMany({
         where: { gradeSubjectId: String(gradeSubjectId), region: targetRegionEnum },
         include: {
-          activity: { include: { items: true } },
+          lesson: { include: { items: true } },
           weekDays: { orderBy: { order: 'asc' } },
         },
         orderBy: { weekNumber: 'asc' },
       });
-      return res.json(weeks);
-    } catch { }
+      const formatted = weeks.map((w: any) => ({
+        ...w,
+        activity: w.lesson || w.activity || null,
+      }));
+      return res.json(formatted);
+    } catch (err) {
+      console.error('Error fetching syllabus weeks from DB:', err);
+    }
   }
 
   const weeks = inMemoryStore.syllabusWeeks.filter(
@@ -919,7 +982,7 @@ app.get('/api/activities', async (req: Request, res: Response) => {
 
   if (isDbConnected) {
     try {
-      const acts = await prisma.lessonActivity.findMany({
+      const acts = await prisma.lesson.findMany({
         where: { gradeSubjectId: String(gradeSubjectId) },
         include: { items: true },
       });
@@ -939,23 +1002,23 @@ app.post('/api/activities', authenticateToken, async (req: Request, res: Respons
 
   if (isDbConnected) {
     try {
-      let activity = id ? await prisma.lessonActivity.findUnique({ where: { id } }) : null;
+      let activity = id ? await prisma.lesson.findUnique({ where: { id } }) : null;
       if (!activity) {
-        activity = await prisma.lessonActivity.create({
+        activity = await prisma.lesson.create({
           data: { gradeSubjectId, syllabusWeekId: syllabusWeekId || null, lessonTitle: lessonTitle.trim() },
         });
       } else {
-        activity = await prisma.lessonActivity.update({
+        activity = await prisma.lesson.update({
           where: { id: activity.id },
           data: { lessonTitle: lessonTitle.trim(), syllabusWeekId: syllabusWeekId || null },
         });
       }
 
-      await prisma.lessonActivityItem.deleteMany({ where: { lessonActivityId: activity.id } });
+      await prisma.lessonItem.deleteMany({ where: { lessonId: activity.id } });
       if (items && items.length > 0) {
-        await prisma.lessonActivityItem.createMany({
+        await prisma.lessonItem.createMany({
           data: items.map((item: any) => ({
-            lessonActivityId: activity!.id,
+            lessonId: activity!.id,
             type: item.type,
             title: item.title || 'نشاط',
             url: item.url || null,
@@ -965,7 +1028,7 @@ app.post('/api/activities', authenticateToken, async (req: Request, res: Respons
         });
       }
 
-      const result = await prisma.lessonActivity.findUnique({
+      const result = await prisma.lesson.findUnique({
         where: { id: activity.id },
         include: { items: true },
       });
@@ -992,7 +1055,7 @@ app.post('/api/activities', authenticateToken, async (req: Request, res: Respons
 app.delete('/api/activities/:id', authenticateToken, async (req: Request, res: Response) => {
   if (isDbConnected) {
     try {
-      await prisma.lessonActivity.delete({ where: { id: req.params.id } });
+      await prisma.lesson.delete({ where: { id: req.params.id } });
       return res.json({ success: true });
     } catch { }
   }

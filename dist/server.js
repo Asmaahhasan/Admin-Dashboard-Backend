@@ -679,6 +679,160 @@ app.post('/api/syllabus-weeks/export-pdf', async (req, res) => {
         return res.status(500).json({ error: 'فشل إنشاء PDF بواسطة Puppeteer: ' + err.message });
     }
 });
+// GET /api/students/random -> Generate realistic random Saudi student names (girls or boys)
+app.get('/api/students/random', (req, res) => {
+    const count = parseInt(req.query.count) || 40;
+    const gender = req.query.gender || 'girls';
+    const girlsNames = ['سارة', 'نورة', 'فاطمة', 'ريم', 'هند', 'الجوهرة', 'حصة', 'منيرة', 'لمى', 'شهد', 'ريما', 'رغد', 'دانه', 'لجين', 'العنود', 'الهنوف', 'أروى', 'بيان', 'جود', 'رهف', 'ديما', 'فرح', 'ليان', 'مريم', 'مها', 'مي', 'وجدان', 'يارا', 'أمل', 'أسماء', 'بشرى', 'تالا', 'جمانة', 'حنان', 'خلود', 'دلال', 'ربى', 'زينب', 'سمية', 'عبير'];
+    const boysNames = ['محمد', 'عبد الله', 'خالد', 'فهد', 'سعد', 'عبد العزيز', 'سليمان', 'إبراهيم', 'سعود', 'عمر', 'أحمد', 'فيصل', 'طارق', 'صالح', 'ناصر', 'عادل', 'منصور', 'يوسف', 'تركي', 'بندر', 'عبد الرحمن', 'ماجد', 'نواف', 'سلمان', 'طلال', 'نايف', 'زياد', 'مشعل', 'بدر', 'راشد'];
+    const fathers = ['محمد', 'عبد الله', 'خالد', 'فهد', 'سعد', 'عبد العزيز', 'سليمان', 'إبراهيم', 'سعود', 'عمر', 'أحمد', 'فيصل', 'طارق', 'صالح', 'ناصر', 'عادل', 'منصور', 'يوسف', 'تركي', 'بندر'];
+    const families = ['العتيبي', 'القحطاني', 'الدوسري', 'الشمري', 'الغامدي', 'الزهراني', 'الحربي', 'المطيري', 'العنزي', 'الشهري', 'القرني', 'العمري', 'التميمي', 'المالكي', 'الرشيدي', 'السبيعي', 'البقمي', 'السلمي', 'الجهني', 'البلوي'];
+    const names = [];
+    const firstPool = gender === 'boys' ? boysNames : girlsNames;
+    for (let i = 0; i < count; i++) {
+        const first = firstPool[i % firstPool.length];
+        const father = fathers[(i * 3 + 2) % fathers.length];
+        const family = families[(i * 7 + 1) % families.length];
+        const middleWord = gender === 'boys' ? 'بن' : 'بنت';
+        names.push(`${first} ${middleWord} ${father} ${family}`);
+    }
+    res.json({ names, count: names.length, gender });
+});
+// POST /api/students-report/export-pdf -> Generate high-quality vector PDF of Students Attendance Sheet
+app.post('/api/students-report/export-pdf', async (req, res) => {
+    const { html, title } = req.body;
+    if (!html)
+        return res.status(400).json({ error: 'محتوى HTML مطلوب' });
+    try {
+        const browser = await puppeteer_1.default.launch({
+            headless: true,
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--no-first-run',
+                '--no-zygote',
+                '--single-process'
+            ],
+        });
+        const page = await browser.newPage();
+        const fullPageHtml = `
+      <!DOCTYPE html>
+      <html lang="ar" dir="rtl">
+      <head>
+        <meta charset="UTF-8">
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+        <style>
+          * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+          body { margin: 0; padding: 12px; background: #ffffff; color: #0f172a; direction: rtl; }
+          .printable-students-sheet { background: #fff; color: #0f172a; direction: rtl; }
+          .sr-header {
+            display: grid;
+            grid-template-columns: 1.2fr 1.6fr 1.2fr;
+            align-items: center;
+            border-bottom: 2px solid #059669;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+          }
+          .sr-moe { font-size: 11px; font-weight: 800; color: #065f46; line-height: 1.4; }
+          .sr-title-box { text-align: center; }
+          .sr-title-pill {
+            background: #059669;
+            color: #ffffff;
+            padding: 5px 22px;
+            border-radius: 50px;
+            font-size: 17px;
+            font-weight: 900;
+            display: inline-block;
+            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
+          }
+          .sr-logos { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+          .sr-logos img { height: 48px; width: auto; objectFit: contain; }
+          .sr-subbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f0fdf4;
+            border: 1.5px solid #059669;
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #064e3b;
+            margin-bottom: 12px;
+          }
+          table.sr-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10.5px;
+            text-align: center;
+            border: 1.5px solid #059669;
+          }
+          table.sr-table th {
+            background: #059669;
+            color: #ffffff;
+            font-weight: 800;
+            border: 1px solid #047857;
+            padding: 5px 2px;
+            font-size: 11px;
+          }
+          table.sr-table th.th-week { font-size: 9.5px; padding: 4px 1px; }
+          table.sr-table td {
+            border: 1px solid #cbd5e1;
+            padding: 3px 4px;
+            font-weight: 700;
+            color: #1e293b;
+            height: 22px;
+            font-size: 10.5px;
+          }
+          table.sr-table tr:nth-child(even) { background: #f8fafc; }
+          .sr-circle-group { display: flex; align-items: center; justify-content: center; gap: 2px; }
+          .sr-circle {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            border: 1.2px solid #94a3b8;
+            display: inline-block;
+            background: #ffffff;
+          }
+          .sr-footer {
+            margin-top: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1.5px dashed #94a3b8;
+            padding-top: 8px;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #64748b;
+          }
+          @page { size: A4 landscape; margin: 6mm; }
+        </style>
+      </head>
+      <body>
+        ${html}
+      </body>
+      </html>
+    `;
+        await page.setContent(fullPageHtml, { waitUntil: 'networkidle0' });
+        await page.evaluateHandle('document.fonts.ready').catch(() => { });
+        const pdfBuffer = await page.pdf({
+            format: 'A4',
+            landscape: true,
+            printBackground: true,
+            margin: { top: '6mm', right: '6mm', bottom: '6mm', left: '6mm' },
+        });
+        await browser.close();
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(title || 'students-attendance-report')}.pdf"`);
+        return res.send(pdfBuffer);
+    }
+    catch (err) {
+        console.error('Puppeteer students report PDF error:', err);
+        return res.status(500).json({ error: 'فشل إنشاء كشف الطلاب PDF بواسطة Puppeteer: ' + err.message });
+    }
+});
 app.get('/api/syllabus-weeks', async (req, res) => {
     const { gradeSubjectId, region } = req.query;
     if (!gradeSubjectId)
