@@ -1156,6 +1156,51 @@ app.post('/api/activities', authenticateToken, async (req, res) => {
     }
     return res.json(actObj);
 });
+app.put('/api/activities/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    const { gradeSubjectId, syllabusWeekId, lessonTitle, items } = req.body;
+    if (isDbConnected) {
+        try {
+            let activity = await prisma.lesson.update({
+                where: { id },
+                data: { lessonTitle: (lessonTitle || '').trim(), syllabusWeekId: syllabusWeekId || null },
+            });
+            if (items) {
+                await prisma.lessonItem.deleteMany({ where: { lessonId: id } });
+                if (items.length > 0) {
+                    await prisma.lessonItem.createMany({
+                        data: items.map((item) => ({
+                            lessonId: id,
+                            type: item.type,
+                            title: item.title || 'نشاط',
+                            url: item.url || null,
+                            filePath: item.filePath || null,
+                            thumbnailUrl: item.thumbnailUrl || null,
+                        })),
+                    });
+                }
+            }
+            const result = await prisma.lesson.findUnique({
+                where: { id },
+                include: { items: true },
+            });
+            return res.json(result);
+        }
+        catch (err) {
+            console.error('Error updating activity:', err);
+        }
+    }
+    const existingIdx = inMemoryStore.activities.findIndex((a) => a.id === id);
+    if (existingIdx >= 0) {
+        inMemoryStore.activities[existingIdx] = {
+            ...inMemoryStore.activities[existingIdx],
+            lessonTitle: (lessonTitle || '').trim(),
+            items: items || [],
+        };
+        return res.json(inMemoryStore.activities[existingIdx]);
+    }
+    return res.status(404).json({ error: 'النشاط غير موجود' });
+});
 app.delete('/api/activities/:id', authenticateToken, async (req, res) => {
     if (isDbConnected) {
         try {
