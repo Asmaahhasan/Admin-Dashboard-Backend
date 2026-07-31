@@ -836,7 +836,21 @@ app.get('/api/syllabus-weeks', async (req, res) => {
                 }
                 catch { }
             }
-            let formatted = (weeks || []).map((w) => ({
+            const uniqueMap = new Map();
+            (weeks || []).forEach((w) => {
+                const wNum = Number(w.weekNumber);
+                const existing = uniqueMap.get(wNum);
+                if (!existing) {
+                    uniqueMap.set(wNum, w);
+                }
+                else {
+                    if (existing.region === 'GENERAL' && (w.region === safeRegionEnum || w.region === 'WESTERN' || w.region === 'MAKKAH')) {
+                        uniqueMap.set(wNum, w);
+                    }
+                }
+            });
+            const uniqueWeeksList = Array.from(uniqueMap.values()).sort((a, b) => a.weekNumber - b.weekNumber);
+            let formatted = uniqueWeeksList.map((w) => ({
                 ...w,
                 activity: w.lesson || w.activity || null,
                 weekDays: w.weekDays || [],
