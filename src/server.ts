@@ -795,7 +795,7 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
     `;
 
     await page.setContent(fullPageHtml, { waitUntil: 'domcontentloaded' as any });
-    await page.evaluateHandle('document.fonts.ready').catch(() => {});
+    await page.evaluateHandle('document.fonts.ready').catch(() => { });
 
     const pdfBuffer = await page.pdf({
       format: 'A4',
@@ -819,77 +819,75 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
   }
 });
 
+const VALID_REGIONS = ['GENERAL', 'MAKKAH', 'JEDDAH', 'TAIF', 'WESTERN'];
+const parseRegionEnum = (r?: any): any => {
+  if (!r) return 'GENERAL';
+  const str = String(r).toUpperCase().trim();
+  if (str === 'WESTERN') return 'MAKKAH';
+  if (VALID_REGIONS.includes(str)) return str;
+  return 'GENERAL';
+};
+
 app.get('/api/syllabus-weeks', async (req: Request, res: Response) => {
   const { gradeSubjectId, region } = req.query;
   if (!gradeSubjectId) return res.status(400).json({ error: 'gradeSubjectId مطلوب' });
 
   if (isDbConnected) {
     try {
-      const targetRegionEnum = region === 'WESTERN' ? 'MAKKAH' : region ? (region as any) : 'GENERAL';
-      const whereClause: any = { gradeSubjectId: String(gradeSubjectId) };
-      if (region && region !== 'ALL') {
-        whereClause.OR = [
-          { region: targetRegionEnum },
-          ...(region === 'WESTERN' ? [{ region: 'WESTERN' as any }] : []),
-          { region: 'GENERAL' as any },
-        ];
-      }
+      const gSubjectIdStr = String(gradeSubjectId).trim();
+      const safeRegionEnum = parseRegionEnum(region);
 
       let weeks: any[] = [];
+
       try {
         weeks = await prisma.syllabusWeek.findMany({
-          where: whereClause,
+          where: {
+            gradeSubjectId: gSubjectIdStr,
+            ...(region && region !== 'ALL' ? {
+              region: { in: [safeRegionEnum, 'WESTERN', 'GENERAL'] as any }
+            } : {}),
+          },
           include: {
-            lesson: { include: { items: true } },
             weekDays: { orderBy: { order: 'asc' } },
+            lesson: { include: { items: true } },
           },
           orderBy: { weekNumber: 'asc' },
         });
-      } catch (incErr) {
-        console.warn('Prisma findMany with includes failed, trying simple findMany:', incErr);
+      } catch (incErr: any) {
+        console.warn('Prisma findMany with includes failed, executing raw SQL:', incErr?.message || incErr);
         try {
-          weeks = await prisma.syllabusWeek.findMany({
-            where: whereClause,
-            include: { weekDays: true },
-            orderBy: { weekNumber: 'asc' },
-          });
-        } catch (simErr) {
-          weeks = await prisma.syllabusWeek.findMany({
-            where: { gradeSubjectId: String(gradeSubjectId) },
-            orderBy: { weekNumber: 'asc' },
-          });
+          weeks = await prisma.$queryRaw`
+            SELECT * FROM "syllabus_weeks" 
+            WHERE "gradeSubjectId" = ${gSubjectIdStr}
+            ORDER BY "weekNumber" ASC
+          `;
+        } catch (rawErr) {
+          console.error('Raw SQL query failed:', rawErr);
         }
       }
 
-      let formatted = weeks.map((w: any) => ({
+      if (!weeks || weeks.length === 0) {
+        try {
+          weeks = await prisma.$queryRaw`
+            SELECT * FROM "syllabus_weeks" 
+            WHERE "gradeSubjectId" = ${gSubjectIdStr}
+            ORDER BY "weekNumber" ASC
+          `;
+        } catch { }
+      }
+
+      let formatted = (weeks || []).map((w: any) => ({
         ...w,
         activity: w.lesson || w.activity || null,
+        weekDays: w.weekDays || [],
       }));
 
       if (formatted.length > 0) {
         return res.json(formatted);
       }
-
-      // Fallback: find any gradeSubjectId in DB that has weeks and use those as template
-      try {
-        const anyWeeks = await prisma.syllabusWeek.findMany({
-          orderBy: { weekNumber: 'asc' },
-          take: 21,
-        });
-        if (anyWeeks.length > 0) {
-          const fallbackFormatted = anyWeeks.map((w: any) => ({
-            ...w,
-            id: `fallback-${String(gradeSubjectId).slice(-8)}-${w.weekNumber}`,
-            gradeSubjectId: String(gradeSubjectId),
-            activity: w.lesson || w.activity || null,
-          }));
-          return res.json(fallbackFormatted);
-        }
-      } catch (fallbackErr) {
-        console.warn('DB fallback failed:', fallbackErr);
-      }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching syllabus weeks from DB:', err);
+      return res.status(500).json({ error: 'خطأ في استعلام أسابيع المنهج من قاعدة البيانات: ' + (err.message || String(err)) });
     }
   }
 
@@ -898,7 +896,6 @@ app.get('/api/syllabus-weeks', async (req: Request, res: Response) => {
   );
 
   if (weeks.length === 0) {
-    // Return standard fallback 21-week Saudi syllabus distribution
     weeks = inMemoryStore.syllabusWeeks.map(w => ({
       ...w,
       id: `w-default-${w.weekNumber}`,
@@ -915,9 +912,10 @@ app.post('/api/syllabus-weeks', async (req: Request, res: Response) => {
     return res.status(400).json({ error: 'بيانات الأسبوع غير مكتملة' });
   }
 
+  const targetRegionEnum = parseRegionEnum(region);
+
   if (isDbConnected) {
     try {
-      const targetRegionEnum = region === 'WESTERN' ? 'MAKKAH' : region ? (region as any) : 'GENERAL';
       let admin = await prisma.admin.findFirst();
       if (!admin) {
         const u = await prisma.user.create({ data: { email: 'admin@madrasati.sa', role: 'ADMIN' } });
@@ -926,6 +924,15 @@ app.post('/api/syllabus-weeks', async (req: Request, res: Response) => {
       const existing = await prisma.syllabusWeek.findFirst({
         where: { gradeSubjectId, weekNumber: Number(weekNumber), region: targetRegionEnum },
       });
+
+      const formattedDays = Array.isArray(days)
+        ? days.map((d: any, idx: number) => ({
+          dayOfWeek: d.dayOfWeek || d.day || d.name || 'الأحد',
+          type: d.type || 'LESSON',
+          lessonTitle: d.lessonTitle || null,
+          order: idx,
+        }))
+        : [];
 
       if (existing) {
         await prisma.weekDay.deleteMany({ where: { weekId: existing.id } });
@@ -937,14 +944,7 @@ app.post('/api/syllabus-weeks', async (req: Request, res: Response) => {
             endDateHijri,
             weekType: weekType || 'LESSON',
             weekDays: {
-              create: days
-                ? days.map((d: any, idx: number) => ({
-                  dayOfWeek: d.day,
-                  type: d.type || 'LESSON',
-                  lessonTitle: d.lessonTitle || null,
-                  order: idx,
-                }))
-                : [],
+              create: formattedDays,
             },
           },
           include: { weekDays: { orderBy: { order: 'asc' } } },
@@ -962,21 +962,17 @@ app.post('/api/syllabus-weeks', async (req: Request, res: Response) => {
             region: targetRegionEnum,
             uploadedById: admin.id,
             weekDays: {
-              create: days
-                ? days.map((d: any, idx: number) => ({
-                  dayOfWeek: d.day,
-                  type: d.type || 'LESSON',
-                  lessonTitle: d.lessonTitle || null,
-                  order: idx,
-                }))
-                : [],
+              create: formattedDays,
             },
           },
           include: { weekDays: { orderBy: { order: 'asc' } } },
         });
         return res.json(created);
       }
-    } catch { }
+    } catch (err: any) {
+      console.error('Error creating/updating syllabus week in DB:', err);
+      return res.status(500).json({ error: 'فشل حفظ الأسبوع في قاعدة البيانات: ' + (err.message || String(err)) });
+    }
   }
 
   const existingIdx = inMemoryStore.syllabusWeeks.findIndex(
@@ -1025,8 +1021,10 @@ app.delete('/api/syllabus-weeks/:id', authenticateToken, async (req: Request, re
 // -------------------- CALENDAR DAYS --------------------
 
 app.get('/api/calendar-days', async (req: Request, res: Response) => {
-  const { startDate, endDate, region } = req.query;
-  if (!startDate || !endDate) return res.status(400).json({ error: 'التواريخ مطلوبة' });
+  const { startDate, endDate, start, end, region } = req.query;
+  const sDate = startDate || start;
+  const eDate = endDate || end;
+  if (!sDate || !eDate) return res.status(400).json({ error: 'التواريخ مطلوبة' });
 
   if (isDbConnected) {
     try {
@@ -1034,8 +1032,8 @@ app.get('/api/calendar-days', async (req: Request, res: Response) => {
       const days = await prisma.calendarDay.findMany({
         where: {
           date: {
-            gte: new Date(String(startDate) + 'T00:00:00.000Z'),
-            lte: new Date(String(endDate) + 'T23:59:59.000Z'),
+            gte: new Date(String(sDate) + 'T00:00:00.000Z'),
+            lte: new Date(String(eDate) + 'T23:59:59.000Z'),
           },
           region: targetRegionEnum,
         },
