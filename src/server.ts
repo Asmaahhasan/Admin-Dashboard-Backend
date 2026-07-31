@@ -729,7 +729,7 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
         <style>
           * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
           html, body { margin: 0; padding: 0; background: #ffffff; color: #000000; direction: rtl; width: 100%; height: 100%; box-sizing: border-box; }
-          .printable-sheet { height: 100vh !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; padding: 2mm 3mm !important; box-sizing: border-box !important; background: #ffffff !important; width: 100% !important; max-width: 100% !important; }
+          .printable-sheet { height: 100vh !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; padding: 2mm 3mm 5mm 3mm !important; box-sizing: border-box !important; background: #ffffff !important; width: 100% !important; max-width: 100% !important; }
           .ps-header {
             display: grid;
             grid-template-columns: 1fr 2fr 1fr;
@@ -784,11 +784,11 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
             box-shadow: none;
             box-sizing: border-box !important;
           }
-          .ps-week-card.is-holiday { border: 1.5px solid #fca5a5 !important; background: #fff1f2 !important; }
-          .ps-week-card.is-exam { border: 1.5px solid #fde68a !important; background: #fffbeb !important; }
+          .ps-week-card.is-holiday { border: 1.5px solid #fed7aa !important; background: #fff7ed !important; }
+          .ps-week-card.is-exam { border: 1.5px solid #a7f3d0 !important; background: #f0fdf4 !important; }
           .ps-week-head { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: #ffffff; padding: 2px 3px; font-weight: 900; font-size: 9px; text-align: center; border-bottom: 1px solid #93c5fd; }
-          .ps-week-card.is-holiday .ps-week-head { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: #ffffff; border-color: #fca5a5; }
-          .ps-week-card.is-exam .ps-week-head { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff; border-color: #fde68a; }
+          .ps-week-card.is-holiday .ps-week-head { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: #ffffff; border-color: #fed7aa; }
+          .ps-week-card.is-exam .ps-week-head { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border-color: #a7f3d0; }
           .ps-week-body {
             padding: 3px 4px !important;
             font-size: 8px !important;
@@ -801,11 +801,11 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
           }
           .ps-card-dates { background: #f0f9ff; border: 1px solid #7dd3fc; border-radius: 3px; padding: 1px 2px; font-size: 7.5px; color: #0369a1; text-align: center; font-weight: 800; margin-bottom: 1px; line-height: 1.15; }
           .ps-national-badge {
-            background: #fff1f2 !important;
-            color: #9f1239 !important;
+            background: #ffedd5 !important;
+            color: #9a3412 !important;
             padding: 2px 3px !important;
             border-radius: 4px !important;
-            border: 1px solid #fecdd3 !important;
+            border: 1px solid #fdba74 !important;
             font-size: 8px !important;
             font-weight: 800 !important;
             text-align: center !important;
@@ -816,11 +816,11 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
             gap: 2px !important;
             line-height: 1.15 !important;
           }
-          .ps-exam-badge { background: #fffbeb !important; color: #92400e !important; padding: 2px 3px !important; border-radius: 4px !important; border: 1px solid #fde68a !important; font-size: 8px !important; font-weight: 800 !important; text-align: center !important; margin: 1px 0 !important; }
+          .ps-exam-badge { background: #dcfce7 !important; color: #166534 !important; padding: 2px 3px !important; border-radius: 4px !important; border: 1px solid #86efac !important; font-size: 8px !important; font-weight: 800 !important; text-align: center !important; margin: 1px 0 !important; }
           .ps-week-item { display: flex; gap: 3px; font-size: 8px; font-weight: 700; color: #1e293b; line-height: 1.2; alignItems: baseline; }
           .ps-item-bullet { color: #d97706; font-weight: 900; font-size: 7px; }
-          .ps-footer-table { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 3px; padding: 3px 8px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 9px; font-weight: 800; color: #1e293b; width: 100%; }
-          .ps-footer-copyright { display: flex !important; align-items: center !important; justify-content: center !important; margin-top: 2px !important; padding: 2px !important; font-size: 7.5px !important; font-weight: 700 !important; color: #64748b !important; border-top: 1px dashed #cbd5e1 !important; }
+          .ps-footer-table { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 3px; margin-bottom: 3px; padding: 4px 8px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 9px; font-weight: 800; color: #1e293b; width: 100%; }
+          .ps-footer-copyright { display: flex !important; align-items: center !important; justify-content: center !important; margin-top: 2px !important; padding: 2px !important; font-size: 7.5px !important; font-weight: 700 !important; color: #64748b !important; border-top: 1px dashed #cbd5e1 !important; margin-bottom: 2px !important; }
           @page { size: A4 landscape; margin: 0mm; }
         </style>
       </head>
@@ -837,7 +837,7 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
       format: 'A4',
       landscape: true,
       printBackground: true,
-      margin: { top: '1.5mm', right: '1.5mm', bottom: '1.5mm', left: '1.5mm' },
+      margin: { top: '2mm', right: '3mm', bottom: '5mm', left: '3mm' },
     });
 
     await browser.close();
