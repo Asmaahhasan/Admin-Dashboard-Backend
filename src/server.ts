@@ -39,6 +39,18 @@ const upload = multer({ storage });
 const prisma = new PrismaClient();
 let isDbConnected = false;
 
+async function checkDbConnection() {
+  try {
+    await prisma.$connect();
+    await prisma.$queryRaw`SELECT 1`;
+    isDbConnected = true;
+    console.log('✅ Connected to PostgreSQL database');
+  } catch (err) {
+    isDbConnected = false;
+    console.warn('⚠️ Database not reachable, using in-memory fallback:', (err as any)?.message);
+  }
+}
+
 // Mock in-memory database for seamless fallback if PostgreSQL is offline
 const inMemoryStore = {
   users: [
@@ -81,16 +93,50 @@ const inMemoryStore = {
     { id: 'sem-3', gradeId: 'grade-3', name: 'الفصل الدراسي الأول', order: 1 },
   ],
   subjects: [
-    { id: 'sub-1', name: 'الرياضيات' },
-    { id: 'sub-2', name: 'العلوم' },
-    { id: 'sub-3', name: 'لغتي' },
-    { id: 'sub-4', name: 'الدراسات الإسلامية' },
+    { id: 'sub-art', name: 'التربية الفنية' },
+    { id: 'sub-quran', name: 'القرآن الكريم والدراسات الإسلامية' },
+    { id: 'sub-arabic', name: 'لغتي الجميلة / الخالدة' },
+    { id: 'sub-math', name: 'الرياضيات' },
+    { id: 'sub-science', name: 'العلوم' },
+    { id: 'sub-english', name: 'اللغة الإنجليزية' },
+    { id: 'sub-digital', name: 'المهارات الرقمية' },
+    { id: 'sub-social', name: 'الدراسات الاجتماعية' },
+    { id: 'sub-pe', name: 'التربية البدنية والدفاع عن النفس' },
   ],
   gradeSubjects: [
-    { id: 'gs-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-1' },
-    { id: 'gs-2', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-2' },
+    { id: 'gs-art-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-art' },
+    { id: 'gs-quran-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-quran' },
+    { id: 'gs-arabic-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-arabic' },
+    { id: 'gs-math-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-math' },
+    { id: 'gs-science-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-science' },
+    { id: 'gs-english-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-english' },
+    { id: 'gs-digital-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-digital' },
+    { id: 'gs-social-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-social' },
+    { id: 'gs-pe-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-pe' },
   ],
-  syllabusWeeks: [] as any[],
+  syllabusWeeks: [
+    { id: 'w-1', gradeSubjectId: 'gs-art-1', weekNumber: 1, title: 'مجال الرسم - الألوان ممتعة / التهيئة', startDateHijri: 'من 3-2 إلى 14-3-1448 هـ', endDateHijri: 'من 23-8 إلى 27-8-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-2', gradeSubjectId: 'gs-art-1', weekNumber: 2, title: 'مجال الرسم - الألوان ممتعة', startDateHijri: 'من 17-3 إلى 21-3-1448 هـ', endDateHijri: 'من 30-8 إلى 3-9-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-3', gradeSubjectId: 'gs-art-1', weekNumber: 3, title: 'مجال الرسم - مجموعة الألوان', startDateHijri: 'من 24-3 إلى 28-3-1448 هـ', endDateHijri: 'من 6-9 إلى 10-9-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-4', gradeSubjectId: 'gs-art-1', weekNumber: 4, title: 'مجال الرسم - الإنسان والرسم', startDateHijri: 'من 2-4 إلى 6-4-1448 هـ', endDateHijri: 'من 13-9 إلى 17-9-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-5', gradeSubjectId: 'gs-art-1', weekNumber: 5, title: '🌴 إجازة اليوم الوطني (23 سبتمبر) | مجال الرسم - الإنسان والرسم | مراجعة | مجال الرسم - مدرستي الجميلة', startDateHijri: 'من 9-4 إلى 13-4-1448 هـ', endDateHijri: 'من 20-9 إلى 24-9-2026 م', weekType: 'HOLIDAY', region: 'GENERAL' },
+    { id: 'w-6', gradeSubjectId: 'gs-art-1', weekNumber: 6, title: 'مجال الرسم - مدرستي الجميلة | مجال الزخرفة - أزخرف بالمربع والمستطيل', startDateHijri: 'من 16-4 إلى 20-4-1448 هـ', endDateHijri: 'من 27-9 إلى 1-10-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-7', gradeSubjectId: 'gs-art-1', weekNumber: 7, title: 'مجال الزخرفة - أزخرف بالمربع والمستطيل | مجال الزخرفة - الزخرفة بالدائرة والمثلث', startDateHijri: 'من 23-4 إلى 27-4-1448 هـ', endDateHijri: 'من 4-10 إلى 8-10-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-8', gradeSubjectId: 'gs-art-1', weekNumber: 8, title: 'مراجعة وتقويم دوري', startDateHijri: 'من 30-4 إلى 4-5-1448 هـ', endDateHijri: 'من 11-10 إلى 15-10-2026 م', weekType: 'EXAM', region: 'GENERAL' },
+    { id: 'w-9', gradeSubjectId: 'gs-art-1', weekNumber: 9, title: 'مجال الزخرفة - الزخرفة بالدائرة والمثلث | مجال الطباعة - أطبع أشكالاً من الطبيعة', startDateHijri: 'من 7-5 إلى 11-5-1448 هـ', endDateHijri: 'من 18-10 إلى 22-10-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-10', gradeSubjectId: 'gs-art-1', weekNumber: 10, title: 'مجال الطباعة - أطبع أشكالاً من الطبيعة | مجال الطباعة - أطبع أشكالاً بأدواتي', startDateHijri: 'من 14-5 إلى 18-5-1448 هـ', endDateHijri: 'من 25-10 إلى 29-10-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-11', gradeSubjectId: 'gs-art-1', weekNumber: 11, title: 'مجال الطباعة - أطبع أشكالاً بأدواتي | مراجعة', startDateHijri: 'من 21-5 إلى 25-5-1448 هـ', endDateHijri: 'من 1-11 إلى 5-11-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-12', gradeSubjectId: 'gs-art-1', weekNumber: 12, title: 'مجال التشكيل المسطح والمجسم - التشكيل بالطين', startDateHijri: 'من 28-5 إلى 2-6-1448 هـ', endDateHijri: 'من 8-11 إلى 12-11-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-13', gradeSubjectId: 'gs-art-1', weekNumber: 13, title: 'مجال التشكيل المسطح والمجسم - التشكيل بالطين | مجال التشكيل المسطح والمجسم - أحفورتي الصغيرة', startDateHijri: 'من 5-6 إلى 9-6-1448 هـ', endDateHijri: 'من 15-11 إلى 19-11-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-14', gradeSubjectId: 'gs-art-1', weekNumber: 14, title: '🌴 إجازة الخريف', startDateHijri: 'من 12-6 إلى 18-6-1448 هـ', endDateHijri: 'من 22-11 إلى 28-11-2026 م', weekType: 'HOLIDAY', region: 'GENERAL' },
+    { id: 'w-15', gradeSubjectId: 'gs-art-1', weekNumber: 15, title: 'مجال التشكيل المسطح والمجسم - أحفورتي الصغيرة | مجال التشكيل المسطح والمجسم - أسماكي المخططة', startDateHijri: 'من 19-6 إلى 23-6-1448 هـ', endDateHijri: 'من 29-11 إلى 3-12-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-16', gradeSubjectId: 'gs-art-1', weekNumber: 16, title: 'مجال التشكيل المسطح والمجسم - أسماكي المخططة | مراجعة', startDateHijri: 'من 26-6 إلى 1-7-1448 هـ', endDateHijri: 'من 6-12 إلى 10-12-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-17', gradeSubjectId: 'gs-art-1', weekNumber: 17, title: 'مراجعة عامة', startDateHijri: 'من 4-7 إلى 8-7-1448 هـ', endDateHijri: 'من 13-12 إلى 17-12-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-18', gradeSubjectId: 'gs-art-1', weekNumber: 18, title: 'مراجعة عامة', startDateHijri: 'من 11-7 إلى 15-7-1448 هـ', endDateHijri: 'من 20-12 إلى 24-12-2026 م', weekType: 'LESSON', region: 'GENERAL' },
+    { id: 'w-19', gradeSubjectId: 'gs-art-1', weekNumber: 19, title: '📝 اختبارات شفهية وعملية', startDateHijri: 'من 18-7 إلى 22-7-1448 هـ', endDateHijri: 'من 27-12 إلى 31-12-2026 م', weekType: 'EXAM', region: 'GENERAL' },
+    { id: 'w-20', gradeSubjectId: 'gs-art-1', weekNumber: 20, title: '📝 اختبارات نهائية', startDateHijri: 'من 25-7 إلى 29-7-1448 هـ', endDateHijri: 'من 3-1 إلى 7-1-2027 م', weekType: 'EXAM', region: 'GENERAL' },
+    { id: 'w-21', gradeSubjectId: 'gs-art-1', weekNumber: 21, title: '🌴 إجازة منتصف العام', startDateHijri: 'من 30-7 إلى 8-8-1448 هـ', endDateHijri: 'من 8-1 إلى 16-1-2027 م', weekType: 'HOLIDAY', region: 'GENERAL' },
+  ] as any[],
   calendarDays: [] as any[],
   activities: [] as any[],
 };
@@ -112,17 +158,7 @@ function authenticateToken(req: AuthRequest, res: Response, next: NextFunction) 
   });
 }
 
-// Check DB Connection
-async function checkDbConnection() {
-  try {
-    await prisma.$connect();
-    isDbConnected = true;
-    console.log('✅ Connected to PostgreSQL successfully!');
-  } catch {
-    isDbConnected = false;
-    console.log('⚠️ PostgreSQL database offline. Operating in resilient In-Memory mode.');
-  }
-}
+
 
 // -------------------- AUTH ROUTES --------------------
 
@@ -521,14 +557,17 @@ app.delete('/api/all-subjects/:id', authenticateToken, async (req: Request, res:
   return res.json({ success: true });
 });
 
-app.get('/api/subjects', async (req: Request, res: Response) => {
+const handleGetSubjects = async (req: Request, res: Response) => {
   const { gradeId, semesterId } = req.query;
-  if (!gradeId || !semesterId) return res.status(400).json({ error: 'gradeId و semesterId مطلوبان' });
 
   if (isDbConnected) {
     try {
+      const whereClause: any = {};
+      if (gradeId) whereClause.gradeId = String(gradeId);
+      if (semesterId) whereClause.semesterId = String(semesterId);
+
       const gsList = await prisma.gradeSubject.findMany({
-        where: { gradeId: String(gradeId), semesterId: String(semesterId) },
+        where: whereClause,
         include: { subject: true },
       });
       const formatted = gsList.map((gs) => ({
@@ -541,7 +580,7 @@ app.get('/api/subjects', async (req: Request, res: Response) => {
   }
 
   const assigned = inMemoryStore.gradeSubjects.filter(
-    (gs) => gs.gradeId === gradeId && gs.semesterId === semesterId
+    (gs) => (!gradeId || gs.gradeId === gradeId) && (!semesterId || gs.semesterId === semesterId)
   );
   const formatted = assigned.map((gs) => {
     const sub = inMemoryStore.subjects.find((s) => s.id === gs.subjectId);
@@ -552,19 +591,23 @@ app.get('/api/subjects', async (req: Request, res: Response) => {
     };
   });
   return res.json(formatted);
-});
+};
 
-app.post('/api/grade-subject/assign', authenticateToken, async (req: Request, res: Response) => {
-  const { gradeId, semesterId, subjectName } = req.body;
-  if (!gradeId || !semesterId || !subjectName) {
+app.get('/api/subjects', handleGetSubjects);
+app.get('/api/grade-subjects', handleGetSubjects);
+
+const handleAssignSubject = async (req: Request, res: Response) => {
+  const { gradeId, semesterId, subjectName, name } = req.body;
+  const targetName = subjectName || name;
+  if (!gradeId || !semesterId || !targetName) {
     return res.status(400).json({ error: 'جميع البيانات مطلوبة' });
   }
 
   if (isDbConnected) {
     try {
-      let subject = await prisma.subject.findUnique({ where: { name: subjectName } });
+      let subject = await prisma.subject.findUnique({ where: { name: targetName } });
       if (!subject) {
-        subject = await prisma.subject.create({ data: { name: subjectName } });
+        subject = await prisma.subject.create({ data: { name: targetName } });
       }
       let gs = await prisma.gradeSubject.findUnique({
         where: { gradeId_semesterId_subjectId: { gradeId, semesterId, subjectId: subject.id } },
@@ -578,9 +621,9 @@ app.post('/api/grade-subject/assign', authenticateToken, async (req: Request, re
     } catch { }
   }
 
-  let sub = inMemoryStore.subjects.find((s) => s.name === subjectName);
+  let sub = inMemoryStore.subjects.find((s) => s.name === targetName);
   if (!sub) {
-    sub = { id: `sub-${Date.now()}`, name: subjectName };
+    sub = { id: `sub-${Date.now()}`, name: targetName };
     inMemoryStore.subjects.push(sub);
   }
   let gs = inMemoryStore.gradeSubjects.find(
@@ -591,9 +634,12 @@ app.post('/api/grade-subject/assign', authenticateToken, async (req: Request, re
     inMemoryStore.gradeSubjects.push(gs);
   }
   return res.json(gs);
-});
+};
 
-app.delete('/api/grade-subject/:id', authenticateToken, async (req: Request, res: Response) => {
+app.post('/api/grade-subject/assign', authenticateToken, handleAssignSubject);
+app.post('/api/grade-subjects', authenticateToken, handleAssignSubject);
+
+const handleDeleteGradeSubject = async (req: Request, res: Response) => {
   if (isDbConnected) {
     try {
       await prisma.gradeSubject.delete({ where: { id: req.params.id } });
@@ -602,7 +648,10 @@ app.delete('/api/grade-subject/:id', authenticateToken, async (req: Request, res
   }
   inMemoryStore.gradeSubjects = inMemoryStore.gradeSubjects.filter((gs) => gs.id !== req.params.id);
   return res.json({ success: true });
-});
+};
+
+app.delete('/api/grade-subject/:id', authenticateToken, handleDeleteGradeSubject);
+app.delete('/api/grade-subjects/:id', authenticateToken, handleDeleteGradeSubject);
 
 // -------------------- SYLLABUS WEEKS --------------------
 
@@ -777,27 +826,67 @@ app.get('/api/syllabus-weeks', async (req: Request, res: Response) => {
   if (isDbConnected) {
     try {
       const targetRegionEnum = region === 'WESTERN' ? 'MAKKAH' : region ? (region as any) : 'GENERAL';
-      const weeks = await prisma.syllabusWeek.findMany({
-        where: { gradeSubjectId: String(gradeSubjectId), region: targetRegionEnum },
-        include: {
-          lesson: { include: { items: true } },
-          weekDays: { orderBy: { order: 'asc' } },
-        },
-        orderBy: { weekNumber: 'asc' },
-      });
+      const whereClause: any = { gradeSubjectId: String(gradeSubjectId) };
+      if (region && region !== 'ALL') {
+        whereClause.OR = [
+          { region: targetRegionEnum },
+          ...(region === 'WESTERN' ? [{ region: 'WESTERN' as any }] : []),
+          { region: 'GENERAL' as any },
+        ];
+      }
+
+      let weeks: any[] = [];
+      try {
+        weeks = await prisma.syllabusWeek.findMany({
+          where: whereClause,
+          include: {
+            lesson: { include: { items: true } },
+            weekDays: { orderBy: { order: 'asc' } },
+          },
+          orderBy: { weekNumber: 'asc' },
+        });
+      } catch (incErr) {
+        console.warn('Prisma findMany with includes failed, trying simple findMany:', incErr);
+        try {
+          weeks = await prisma.syllabusWeek.findMany({
+            where: whereClause,
+            include: { weekDays: true },
+            orderBy: { weekNumber: 'asc' },
+          });
+        } catch (simErr) {
+          weeks = await prisma.syllabusWeek.findMany({
+            where: { gradeSubjectId: String(gradeSubjectId) },
+            orderBy: { weekNumber: 'asc' },
+          });
+        }
+      }
+
       const formatted = weeks.map((w: any) => ({
         ...w,
         activity: w.lesson || w.activity || null,
       }));
-      return res.json(formatted);
+
+      if (formatted.length > 0) {
+        return res.json(formatted);
+      }
     } catch (err) {
       console.error('Error fetching syllabus weeks from DB:', err);
     }
   }
 
-  const weeks = inMemoryStore.syllabusWeeks.filter(
+  let weeks = inMemoryStore.syllabusWeeks.filter(
     (w) => w.gradeSubjectId === gradeSubjectId && (!region || w.region === region || w.region === 'GENERAL')
   );
+
+  if (weeks.length === 0) {
+    // Return standard fallback 21-week Saudi syllabus distribution
+    weeks = inMemoryStore.syllabusWeeks.map(w => ({
+      ...w,
+      id: `w-default-${w.weekNumber}`,
+      gradeSubjectId: String(gradeSubjectId)
+    }));
+  }
+
   return res.json(weeks);
 });
 
