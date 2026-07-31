@@ -1274,6 +1274,88 @@ app.delete('/api/activities/:id', authenticateToken, async (req: Request, res: R
   return res.json({ success: true });
 });
 
+// -------------------- SUBJECT LESSONS --------------------
+
+app.get('/api/subject-lessons', async (req: Request, res: Response) => {
+  const { gradeSubjectId } = req.query;
+  if (!gradeSubjectId) return res.status(400).json({ error: 'gradeSubjectId مطلوب' });
+
+  if (isDbConnected) {
+    try {
+      const lessons = await prisma.lesson.findMany({
+        where: { gradeSubjectId: String(gradeSubjectId) },
+        orderBy: { createdAt: 'asc' },
+        include: { items: true },
+      });
+      return res.json(lessons);
+    } catch { }
+  }
+
+  const lessons = inMemoryStore.activities.filter((a) => a.gradeSubjectId === gradeSubjectId);
+  return res.json(lessons);
+});
+
+app.post('/api/subject-lessons', authenticateToken, async (req: Request, res: Response) => {
+  const { gradeSubjectId, lessonTitle } = req.body;
+  if (!gradeSubjectId || !lessonTitle) {
+    return res.status(400).json({ error: 'المادة وعنوان الدرس مطلوبان' });
+  }
+
+  if (isDbConnected) {
+    try {
+      const lesson = await prisma.lesson.create({
+        data: { gradeSubjectId, lessonTitle: lessonTitle.trim() },
+        include: { items: true },
+      });
+      return res.json(lesson);
+    } catch { }
+  }
+
+  const newLesson = {
+    id: `lesson-${Date.now()}`,
+    gradeSubjectId,
+    syllabusWeekId: null,
+    lessonTitle: lessonTitle.trim(),
+    items: [],
+  };
+  inMemoryStore.activities.push(newLesson);
+  return res.json(newLesson);
+});
+
+app.put('/api/subject-lessons/:id', authenticateToken, async (req: Request, res: Response) => {
+  const { lessonTitle } = req.body;
+  if (!lessonTitle) return res.status(400).json({ error: 'عنوان الدرس مطلوب' });
+
+  if (isDbConnected) {
+    try {
+      const lesson = await prisma.lesson.update({
+        where: { id: req.params.id },
+        data: { lessonTitle: lessonTitle.trim() },
+        include: { items: true },
+      });
+      return res.json(lesson);
+    } catch { }
+  }
+
+  const lesson = inMemoryStore.activities.find((a) => a.id === req.params.id);
+  if (lesson) {
+    lesson.lessonTitle = lessonTitle.trim();
+    return res.json(lesson);
+  }
+  return res.status(404).json({ error: 'الدرس غير موجود' });
+});
+
+app.delete('/api/subject-lessons/:id', authenticateToken, async (req: Request, res: Response) => {
+  if (isDbConnected) {
+    try {
+      await prisma.lesson.delete({ where: { id: req.params.id } });
+      return res.json({ success: true });
+    } catch { }
+  }
+  inMemoryStore.activities = inMemoryStore.activities.filter((a) => a.id !== req.params.id);
+  return res.json({ success: true });
+});
+
 // Extension activity lookup endpoint
 app.get('/api/activities/find', async (req: Request, res: Response) => {
   const { lessonTitle } = req.query;
