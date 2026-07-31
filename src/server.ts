@@ -709,11 +709,14 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
     const browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
 
+    const cleanHtml = String(html).replace(/src="\/([^"]+)"/g, 'src="https://admin.wsyelhi.com/$1"');
+
     const fullPageHtml = `
       <!DOCTYPE html>
       <html lang="ar" dir="rtl">
       <head>
         <meta charset="UTF-8">
+        <base href="https://admin.wsyelhi.com/">
         <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
         <style>
           * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
@@ -810,7 +813,7 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
         </style>
       </head>
       <body>
-        ${html}
+        ${cleanHtml}
       </body>
       </html>
     `;
