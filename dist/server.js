@@ -647,11 +647,11 @@ app.post('/api/syllabus-weeks/export-pdf', async (req, res) => {
         };
         const systemChromePaths = [
             process.env.PUPPETEER_EXECUTABLE_PATH,
-            findPuppeteerCacheChrome(),
-            '/usr/bin/google-chrome-stable',
-            '/usr/bin/google-chrome',
             '/usr/bin/chromium-browser',
             '/usr/bin/chromium',
+            '/usr/bin/google-chrome-stable',
+            '/usr/bin/google-chrome',
+            findPuppeteerCacheChrome(),
             '/snap/bin/chromium',
             'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
             'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
@@ -661,6 +661,7 @@ app.post('/api/syllabus-weeks/export-pdf', async (req, res) => {
         let executablePath = systemChromePaths.find(p => p && fs_1.default.existsSync(p));
         const launchOptions = {
             headless: true,
+            executablePath: executablePath || '/usr/bin/chromium-browser',
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -671,9 +672,6 @@ app.post('/api/syllabus-weeks/export-pdf', async (req, res) => {
                 '--single-process'
             ],
         };
-        if (executablePath) {
-            launchOptions.executablePath = executablePath;
-        }
         const browser = await puppeteer_1.default.launch(launchOptions);
         const page = await browser.newPage();
         const fullPageHtml = `
