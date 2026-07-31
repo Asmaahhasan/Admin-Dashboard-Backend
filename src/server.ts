@@ -660,8 +660,26 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
   if (!html) return res.status(400).json({ error: 'محتوى HTML مطلوب' });
 
   try {
+    const findPuppeteerCacheChrome = () => {
+      try {
+        const baseDir = process.env.HOME || '/root';
+        const puppeteerDir = path.join(baseDir, '.cache/puppeteer/chrome');
+        if (fs.existsSync(puppeteerDir)) {
+          const subdirs = fs.readdirSync(puppeteerDir);
+          for (const dir of subdirs) {
+            const p1 = path.join(puppeteerDir, dir, 'chrome-linux64', 'chrome');
+            if (fs.existsSync(p1)) return p1;
+            const p2 = path.join(puppeteerDir, dir, 'chrome-linux', 'chrome');
+            if (fs.existsSync(p2)) return p2;
+          }
+        }
+      } catch {}
+      return null;
+    };
+
     const systemChromePaths = [
       process.env.PUPPETEER_EXECUTABLE_PATH,
+      findPuppeteerCacheChrome(),
       '/usr/bin/google-chrome-stable',
       '/usr/bin/google-chrome',
       '/usr/bin/chromium-browser',
