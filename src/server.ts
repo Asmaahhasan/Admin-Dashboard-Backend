@@ -15,7 +15,18 @@ const app = express();
 const PORT = process.env.PORT || 4001;
 const JWT_SECRET = process.env.JWT_SECRET || 'madrasati-admin-secret-key-2026';
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://admin.wsyelhi.com',
+    'https://wsyelhi.com',
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'http://localhost:4001',
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+}));
 app.use(express.json());
 
 // Set up static uploads folder

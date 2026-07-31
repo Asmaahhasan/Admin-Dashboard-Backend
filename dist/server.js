@@ -13,28 +13,22 @@ const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const client_1 = require("@prisma/client");
 const puppeteer_1 = __importDefault(require("puppeteer"));
-const logo_b64_1 = require("./logo-b64");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 4001;
 const JWT_SECRET = process.env.JWT_SECRET || 'madrasati-admin-secret-key-2026';
-const corsOptions = {
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+app.use((0, cors_1.default)({
+    origin: [
+        'https://admin.wsyelhi.com',
+        'https://wsyelhi.com',
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'http://localhost:4001',
+    ],
     credentials: true,
-};
-app.use((0, cors_1.default)(corsOptions));
-app.options('*', (0, cors_1.default)(corsOptions));
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
-    if (req.method === 'OPTIONS') {
-        return res.sendStatus(200);
-    }
-    next();
-});
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+}));
 app.use(express_1.default.json());
 // Set up static uploads folder
 const uploadsDir = path_1.default.join(__dirname, '../uploads');
@@ -691,15 +685,11 @@ app.post('/api/syllabus-weeks/export-pdf', async (req, res) => {
         };
         const browser = await puppeteer_1.default.launch(launchOptions);
         const page = await browser.newPage();
-        let cleanHtml = String(html)
-            .replace(/src="[^"]*wsylh-logo[^"]*"/g, `src="${logo_b64_1.LOGO_BASE64}"`)
-            .replace(/src="\/([^"]+)"/g, 'src="https://admin.wsyelhi.com/$1"');
         const fullPageHtml = `
       <!DOCTYPE html>
       <html lang="ar" dir="rtl">
       <head>
         <meta charset="UTF-8">
-        <base href="https://admin.wsyelhi.com/">
         <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
         <style>
           * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
@@ -796,7 +786,7 @@ app.post('/api/syllabus-weeks/export-pdf', async (req, res) => {
         </style>
       </head>
       <body>
-        ${cleanHtml}
+        ${html}
       </body>
       </html>
     `;
@@ -1155,51 +1145,6 @@ app.post('/api/activities', authenticateToken, async (req, res) => {
         inMemoryStore.activities.push(actObj);
     }
     return res.json(actObj);
-});
-app.put('/api/activities/:id', authenticateToken, async (req, res) => {
-    const { id } = req.params;
-    const { gradeSubjectId, syllabusWeekId, lessonTitle, items } = req.body;
-    if (isDbConnected) {
-        try {
-            let activity = await prisma.lesson.update({
-                where: { id },
-                data: { lessonTitle: (lessonTitle || '').trim(), syllabusWeekId: syllabusWeekId || null },
-            });
-            if (items) {
-                await prisma.lessonItem.deleteMany({ where: { lessonId: id } });
-                if (items.length > 0) {
-                    await prisma.lessonItem.createMany({
-                        data: items.map((item) => ({
-                            lessonId: id,
-                            type: item.type,
-                            title: item.title || 'نشاط',
-                            url: item.url || null,
-                            filePath: item.filePath || null,
-                            thumbnailUrl: item.thumbnailUrl || null,
-                        })),
-                    });
-                }
-            }
-            const result = await prisma.lesson.findUnique({
-                where: { id },
-                include: { items: true },
-            });
-            return res.json(result);
-        }
-        catch (err) {
-            console.error('Error updating activity:', err);
-        }
-    }
-    const existingIdx = inMemoryStore.activities.findIndex((a) => a.id === id);
-    if (existingIdx >= 0) {
-        inMemoryStore.activities[existingIdx] = {
-            ...inMemoryStore.activities[existingIdx],
-            lessonTitle: (lessonTitle || '').trim(),
-            items: items || [],
-        };
-        return res.json(inMemoryStore.activities[existingIdx]);
-    }
-    return res.status(404).json({ error: 'النشاط غير موجود' });
 });
 app.delete('/api/activities/:id', authenticateToken, async (req, res) => {
     if (isDbConnected) {
