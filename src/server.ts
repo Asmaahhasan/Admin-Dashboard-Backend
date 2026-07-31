@@ -8,7 +8,6 @@ import path from 'path';
 import fs from 'fs';
 import { PrismaClient } from '@prisma/client';
 import puppeteer from 'puppeteer';
-import { LOGO_BASE64 } from './logo-b64';
 
 dotenv.config();
 
@@ -16,26 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 4001;
 const JWT_SECRET = process.env.JWT_SECRET || 'madrasati-admin-secret-key-2026';
 
-const corsOptions = {
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
-
-app.use((req: Request, res: Response, next: NextFunction) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-  next();
-});
-
+app.use(cors());
 app.use(express.json());
 
 // Set up static uploads folder
@@ -729,9 +709,7 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
     const browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
 
-    let cleanHtml = String(html)
-      .replace(/src="[^"]*wsylh-logo[^"]*"/g, `src="${LOGO_BASE64}"`)
-      .replace(/src="\/([^"]+)"/g, 'src="https://admin.wsyelhi.com/$1"');
+    const cleanHtml = String(html).replace(/src="\/([^"]+)"/g, 'src="https://admin.wsyelhi.com/$1"');
 
     const fullPageHtml = `
       <!DOCTYPE html>
@@ -1216,54 +1194,6 @@ app.post('/api/activities', authenticateToken, async (req: Request, res: Respons
     inMemoryStore.activities.push(actObj);
   }
   return res.json(actObj);
-});
-
-app.put('/api/activities/:id', authenticateToken, async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { gradeSubjectId, syllabusWeekId, lessonTitle, items } = req.body;
-  if (isDbConnected) {
-    try {
-      let activity = await prisma.lesson.update({
-        where: { id },
-        data: { lessonTitle: (lessonTitle || '').trim(), syllabusWeekId: syllabusWeekId || null },
-      });
-
-      if (items) {
-        await prisma.lessonItem.deleteMany({ where: { lessonId: id } });
-        if (items.length > 0) {
-          await prisma.lessonItem.createMany({
-            data: items.map((item: any) => ({
-              lessonId: id,
-              type: item.type,
-              title: item.title || 'نشاط',
-              url: item.url || null,
-              filePath: item.filePath || null,
-              thumbnailUrl: item.thumbnailUrl || null,
-            })),
-          });
-        }
-      }
-
-      const result = await prisma.lesson.findUnique({
-        where: { id },
-        include: { items: true },
-      });
-      return res.json(result);
-    } catch (err: any) {
-      console.error('Error updating activity:', err);
-    }
-  }
-
-  const existingIdx = inMemoryStore.activities.findIndex((a) => a.id === id);
-  if (existingIdx >= 0) {
-    inMemoryStore.activities[existingIdx] = {
-      ...inMemoryStore.activities[existingIdx],
-      lessonTitle: (lessonTitle || '').trim(),
-      items: items || [],
-    };
-    return res.json(inMemoryStore.activities[existingIdx]);
-  }
-  return res.status(404).json({ error: 'النشاط غير موجود' });
 });
 
 app.delete('/api/activities/:id', authenticateToken, async (req: Request, res: Response) => {
