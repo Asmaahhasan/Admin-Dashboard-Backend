@@ -693,8 +693,8 @@ app.post('/api/syllabus-weeks/export-pdf', async (req, res) => {
         <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
         <style>
           * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-          html, body { margin: 0; padding: 0; background: #ffffff; color: #000000; direction: rtl; width: 100%; min-height: 100vh; height: auto; box-sizing: border-box; }
-          .printable-sheet { min-height: 100vh !important; height: auto !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; padding: 4mm 5mm !important; box-sizing: border-box !important; background: #ffffff !important; width: 100% !important; max-width: 100% !important; }
+          html, body { margin: 0; padding: 0; background: #ffffff; color: #000000; direction: rtl; width: 100%; height: 100vh; overflow: hidden; box-sizing: border-box; }
+          .printable-sheet { height: 100vh !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; padding: 4mm 5mm !important; box-sizing: border-box !important; background: #ffffff !important; width: 100% !important; max-width: 100% !important; }
           .ps-header {
             display: grid;
             grid-template-columns: 1fr 2fr 1fr;
@@ -730,8 +730,8 @@ app.post('/api/syllabus-weeks/export-pdf', async (req, res) => {
             flex: 1 !important;
             display: grid !important;
             grid-template-columns: repeat(6, 1fr) !important;
-            grid-auto-rows: minmax(min-content, max-content) !important;
-            gap: 5px !important;
+            grid-auto-rows: 1fr !important;
+            gap: 6px !important;
             margin-bottom: 5px !important;
             width: 100% !important;
             align-items: stretch !important;
