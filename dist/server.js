@@ -718,14 +718,14 @@ app.post('/api/syllabus-weeks/export-pdf', async (req, res) => {
             background: #f8fafc;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
-            padding: 5px 10px;
+            padding: 4px 10px;
             margin-bottom: 6px;
             text-align: center;
           }
-          .ps-info-item { border-left: 1px solid #cbd5e1; }
+          .ps-info-item { border-left: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center; gap: 6px; }
           .ps-info-item:last-child { border-left: none; }
-          .ps-info-label { font-size: 9.5px; font-weight: 700; color: #64748b; }
-          .ps-info-val { font-size: 11px; font-weight: 900; color: #0f766e; display: block; margin-top: 1px; }
+          .ps-info-label { font-size: 10px; font-weight: 800; color: #0369a1; white-space: nowrap; }
+          .ps-info-val { font-size: 11px; font-weight: 900; color: #0f766e; white-space: nowrap; }
           .ps-weeks-grid {
             flex: 1 !important;
             display: grid !important;
