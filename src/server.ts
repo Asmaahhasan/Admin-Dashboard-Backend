@@ -861,13 +861,32 @@ app.get('/api/syllabus-weeks', async (req: Request, res: Response) => {
         }
       }
 
-      const formatted = weeks.map((w: any) => ({
+      let formatted = weeks.map((w: any) => ({
         ...w,
         activity: w.lesson || w.activity || null,
       }));
 
       if (formatted.length > 0) {
         return res.json(formatted);
+      }
+
+      // Fallback: find any gradeSubjectId in DB that has weeks and use those as template
+      try {
+        const anyWeeks = await prisma.syllabusWeek.findMany({
+          orderBy: { weekNumber: 'asc' },
+          take: 21,
+        });
+        if (anyWeeks.length > 0) {
+          const fallbackFormatted = anyWeeks.map((w: any) => ({
+            ...w,
+            id: `fallback-${String(gradeSubjectId).slice(-8)}-${w.weekNumber}`,
+            gradeSubjectId: String(gradeSubjectId),
+            activity: w.lesson || w.activity || null,
+          }));
+          return res.json(fallbackFormatted);
+        }
+      } catch (fallbackErr) {
+        console.warn('DB fallback failed:', fallbackErr);
       }
     } catch (err) {
       console.error('Error fetching syllabus weeks from DB:', err);
