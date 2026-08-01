@@ -1276,7 +1276,7 @@ app.delete('/api/activities/:id', authenticateToken, async (req: Request, res: R
 
 // -------------------- SUBJECT LESSONS --------------------
 
-app.get('/api/subject-lessons', async (req: Request, res: Response) => {
+const handleGetSubjectLessons = async (req: Request, res: Response) => {
   const { gradeSubjectId } = req.query;
   if (!gradeSubjectId) return res.status(400).json({ error: 'gradeSubjectId مطلوب' });
 
@@ -1293,9 +1293,12 @@ app.get('/api/subject-lessons', async (req: Request, res: Response) => {
 
   const lessons = inMemoryStore.activities.filter((a) => a.gradeSubjectId === gradeSubjectId);
   return res.json(lessons);
-});
+};
 
-app.post('/api/subject-lessons', authenticateToken, async (req: Request, res: Response) => {
+app.get('/api/subject-lessons', handleGetSubjectLessons);
+app.get('/subject-lessons', handleGetSubjectLessons);
+
+const handleCreateSubjectLesson = async (req: Request, res: Response) => {
   const { gradeSubjectId, lessonTitle } = req.body;
   if (!gradeSubjectId || !lessonTitle) {
     return res.status(400).json({ error: 'المادة وعنوان الدرس مطلوبان' });
@@ -1320,9 +1323,12 @@ app.post('/api/subject-lessons', authenticateToken, async (req: Request, res: Re
   };
   inMemoryStore.activities.push(newLesson);
   return res.json(newLesson);
-});
+};
 
-app.put('/api/subject-lessons/:id', authenticateToken, async (req: Request, res: Response) => {
+app.post('/api/subject-lessons', authenticateToken, handleCreateSubjectLesson);
+app.post('/subject-lessons', authenticateToken, handleCreateSubjectLesson);
+
+const handleUpdateSubjectLesson = async (req: Request, res: Response) => {
   const { lessonTitle } = req.body;
   if (!lessonTitle) return res.status(400).json({ error: 'عنوان الدرس مطلوب' });
 
@@ -1343,9 +1349,12 @@ app.put('/api/subject-lessons/:id', authenticateToken, async (req: Request, res:
     return res.json(lesson);
   }
   return res.status(404).json({ error: 'الدرس غير موجود' });
-});
+};
 
-app.delete('/api/subject-lessons/:id', authenticateToken, async (req: Request, res: Response) => {
+app.put('/api/subject-lessons/:id', authenticateToken, handleUpdateSubjectLesson);
+app.put('/subject-lessons/:id', authenticateToken, handleUpdateSubjectLesson);
+
+const handleDeleteSubjectLesson = async (req: Request, res: Response) => {
   if (isDbConnected) {
     try {
       await prisma.lesson.delete({ where: { id: req.params.id } });
@@ -1354,7 +1363,10 @@ app.delete('/api/subject-lessons/:id', authenticateToken, async (req: Request, r
   }
   inMemoryStore.activities = inMemoryStore.activities.filter((a) => a.id !== req.params.id);
   return res.json({ success: true });
-});
+};
+
+app.delete('/api/subject-lessons/:id', authenticateToken, handleDeleteSubjectLesson);
+app.delete('/subject-lessons/:id', authenticateToken, handleDeleteSubjectLesson);
 
 // Extension activity lookup endpoint
 app.get('/api/activities/find', async (req: Request, res: Response) => {
