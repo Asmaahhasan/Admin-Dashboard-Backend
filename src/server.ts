@@ -16,13 +16,7 @@ const PORT = process.env.PORT || 4001;
 const JWT_SECRET = process.env.JWT_SECRET || 'madrasati-admin-secret-key-2026';
 
 app.use(cors({
-  origin: [
-    'https://admin.wsyelhi.com',
-    'https://wsyelhi.com',
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'http://localhost:4001',
-  ],
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
@@ -62,94 +56,30 @@ async function checkDbConnection() {
   }
 }
 
-// Mock in-memory database for seamless fallback if PostgreSQL is offline
-const inMemoryStore = {
-  users: [
-    {
-      id: 'admin-user-1',
-      email: 'admin@madrasati.sa',
-      passwordHash: '$2b$10$w8T0CjS2Qf/sF1XlEa9Qeu9m4z0W2O5d8P3X9G7E2F1A3C5B7D9E', // hashed 'admin123456'
-      role: 'ADMIN',
-    },
-  ],
-  admins: [
-    {
-      id: 'admin-1',
-      userId: 'admin-user-1',
-      fullName: 'مدير النظام',
-      email: 'admin@madrasati.sa',
-      permissions: ['ALL'],
-    },
-  ],
-  stages: [
-    { id: 'stage-1', name: 'المرحلة الابتدائية', order: 1 },
-    { id: 'stage-2', name: 'المرحلة المتوسطة', order: 2 },
-    { id: 'stage-3', name: 'المرحلة الثانوية', order: 3 },
-  ],
-  tracks: [
-    { id: 'track-1', stageId: 'stage-1', name: 'عام', order: 1 },
-    { id: 'track-2', stageId: 'stage-2', name: 'عام', order: 1 },
-    { id: 'track-3', stageId: 'stage-3', name: 'مسار عام', order: 1 },
-    { id: 'track-4', stageId: 'stage-3', name: 'مسار إدارة وأعمال', order: 2 },
-  ],
-  grades: [
-    { id: 'grade-1', trackId: 'track-1', name: 'الصف الأول الابتدائي', order: 1 },
-    { id: 'grade-2', trackId: 'track-1', name: 'الصف الثاني الابتدائي', order: 2 },
-    { id: 'grade-3', trackId: 'track-2', name: 'الصف الأول المتوسط', order: 1 },
-    { id: 'grade-4', trackId: 'track-2', name: 'الصف الثاني المتوسط', order: 2 },
-  ],
-  semesters: [
-    { id: 'sem-1', gradeId: 'grade-1', name: 'الفصل الدراسي الأول', order: 1 },
-    { id: 'sem-2', gradeId: 'grade-1', name: 'الفصل الدراسي الثاني', order: 2 },
-    { id: 'sem-3', gradeId: 'grade-3', name: 'الفصل الدراسي الأول', order: 1 },
-  ],
-  subjects: [
-    { id: 'sub-art', name: 'التربية الفنية' },
-    { id: 'sub-quran', name: 'القرآن الكريم والدراسات الإسلامية' },
-    { id: 'sub-arabic', name: 'لغتي الجميلة / الخالدة' },
-    { id: 'sub-math', name: 'الرياضيات' },
-    { id: 'sub-science', name: 'العلوم' },
-    { id: 'sub-english', name: 'اللغة الإنجليزية' },
-    { id: 'sub-digital', name: 'المهارات الرقمية' },
-    { id: 'sub-social', name: 'الدراسات الاجتماعية' },
-    { id: 'sub-pe', name: 'التربية البدنية والدفاع عن النفس' },
-  ],
-  gradeSubjects: [
-    { id: 'gs-art-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-art' },
-    { id: 'gs-quran-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-quran' },
-    { id: 'gs-arabic-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-arabic' },
-    { id: 'gs-math-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-math' },
-    { id: 'gs-science-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-science' },
-    { id: 'gs-english-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-english' },
-    { id: 'gs-digital-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-digital' },
-    { id: 'gs-social-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-social' },
-    { id: 'gs-pe-1', gradeId: 'grade-1', semesterId: 'sem-1', subjectId: 'sub-pe' },
-  ],
-  syllabusWeeks: [
-    { id: 'w-1', gradeSubjectId: 'gs-art-1', weekNumber: 1, title: 'مجال الرسم - الألوان ممتعة / التهيئة', startDateHijri: 'من 3-2 إلى 14-3-1448 هـ', endDateHijri: 'من 23-8 إلى 27-8-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-2', gradeSubjectId: 'gs-art-1', weekNumber: 2, title: 'مجال الرسم - الألوان ممتعة', startDateHijri: 'من 17-3 إلى 21-3-1448 هـ', endDateHijri: 'من 30-8 إلى 3-9-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-3', gradeSubjectId: 'gs-art-1', weekNumber: 3, title: 'مجال الرسم - مجموعة الألوان', startDateHijri: 'من 24-3 إلى 28-3-1448 هـ', endDateHijri: 'من 6-9 إلى 10-9-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-4', gradeSubjectId: 'gs-art-1', weekNumber: 4, title: 'مجال الرسم - الإنسان والرسم', startDateHijri: 'من 2-4 إلى 6-4-1448 هـ', endDateHijri: 'من 13-9 إلى 17-9-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-5', gradeSubjectId: 'gs-art-1', weekNumber: 5, title: '🌴 إجازة اليوم الوطني (23 سبتمبر) | مجال الرسم - الإنسان والرسم | مراجعة | مجال الرسم - مدرستي الجميلة', startDateHijri: 'من 9-4 إلى 13-4-1448 هـ', endDateHijri: 'من 20-9 إلى 24-9-2026 م', weekType: 'HOLIDAY', region: 'GENERAL' },
-    { id: 'w-6', gradeSubjectId: 'gs-art-1', weekNumber: 6, title: 'مجال الرسم - مدرستي الجميلة | مجال الزخرفة - أزخرف بالمربع والمستطيل', startDateHijri: 'من 16-4 إلى 20-4-1448 هـ', endDateHijri: 'من 27-9 إلى 1-10-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-7', gradeSubjectId: 'gs-art-1', weekNumber: 7, title: 'مجال الزخرفة - أزخرف بالمربع والمستطيل | مجال الزخرفة - الزخرفة بالدائرة والمثلث', startDateHijri: 'من 23-4 إلى 27-4-1448 هـ', endDateHijri: 'من 4-10 إلى 8-10-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-8', gradeSubjectId: 'gs-art-1', weekNumber: 8, title: 'مراجعة وتقويم دوري', startDateHijri: 'من 30-4 إلى 4-5-1448 هـ', endDateHijri: 'من 11-10 إلى 15-10-2026 م', weekType: 'EXAM', region: 'GENERAL' },
-    { id: 'w-9', gradeSubjectId: 'gs-art-1', weekNumber: 9, title: 'مجال الزخرفة - الزخرفة بالدائرة والمثلث | مجال الطباعة - أطبع أشكالاً من الطبيعة', startDateHijri: 'من 7-5 إلى 11-5-1448 هـ', endDateHijri: 'من 18-10 إلى 22-10-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-10', gradeSubjectId: 'gs-art-1', weekNumber: 10, title: 'مجال الطباعة - أطبع أشكالاً من الطبيعة | مجال الطباعة - أطبع أشكالاً بأدواتي', startDateHijri: 'من 14-5 إلى 18-5-1448 هـ', endDateHijri: 'من 25-10 إلى 29-10-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-11', gradeSubjectId: 'gs-art-1', weekNumber: 11, title: 'مجال الطباعة - أطبع أشكالاً بأدواتي | مراجعة', startDateHijri: 'من 21-5 إلى 25-5-1448 هـ', endDateHijri: 'من 1-11 إلى 5-11-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-12', gradeSubjectId: 'gs-art-1', weekNumber: 12, title: 'مجال التشكيل المسطح والمجسم - التشكيل بالطين', startDateHijri: 'من 28-5 إلى 2-6-1448 هـ', endDateHijri: 'من 8-11 إلى 12-11-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-13', gradeSubjectId: 'gs-art-1', weekNumber: 13, title: 'مجال التشكيل المسطح والمجسم - التشكيل بالطين | مجال التشكيل المسطح والمجسم - أحفورتي الصغيرة', startDateHijri: 'من 5-6 إلى 9-6-1448 هـ', endDateHijri: 'من 15-11 إلى 19-11-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-14', gradeSubjectId: 'gs-art-1', weekNumber: 14, title: '🌴 إجازة الخريف', startDateHijri: 'من 12-6 إلى 18-6-1448 هـ', endDateHijri: 'من 22-11 إلى 28-11-2026 م', weekType: 'HOLIDAY', region: 'GENERAL' },
-    { id: 'w-15', gradeSubjectId: 'gs-art-1', weekNumber: 15, title: 'مجال التشكيل المسطح والمجسم - أحفورتي الصغيرة | مجال التشكيل المسطح والمجسم - أسماكي المخططة', startDateHijri: 'من 19-6 إلى 23-6-1448 هـ', endDateHijri: 'من 29-11 إلى 3-12-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-16', gradeSubjectId: 'gs-art-1', weekNumber: 16, title: 'مجال التشكيل المسطح والمجسم - أسماكي المخططة | مراجعة', startDateHijri: 'من 26-6 إلى 1-7-1448 هـ', endDateHijri: 'من 6-12 إلى 10-12-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-17', gradeSubjectId: 'gs-art-1', weekNumber: 17, title: 'مراجعة عامة', startDateHijri: 'من 4-7 إلى 8-7-1448 هـ', endDateHijri: 'من 13-12 إلى 17-12-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-18', gradeSubjectId: 'gs-art-1', weekNumber: 18, title: 'مراجعة عامة', startDateHijri: 'من 11-7 إلى 15-7-1448 هـ', endDateHijri: 'من 20-12 إلى 24-12-2026 م', weekType: 'LESSON', region: 'GENERAL' },
-    { id: 'w-19', gradeSubjectId: 'gs-art-1', weekNumber: 19, title: '📝 اختبارات شفهية وعملية', startDateHijri: 'من 18-7 إلى 22-7-1448 هـ', endDateHijri: 'من 27-12 إلى 31-12-2026 م', weekType: 'EXAM', region: 'GENERAL' },
-    { id: 'w-20', gradeSubjectId: 'gs-art-1', weekNumber: 20, title: '📝 اختبارات نهائية', startDateHijri: 'من 25-7 إلى 29-7-1448 هـ', endDateHijri: 'من 3-1 إلى 7-1-2027 م', weekType: 'EXAM', region: 'GENERAL' },
-    { id: 'w-21', gradeSubjectId: 'gs-art-1', weekNumber: 21, title: '🌴 إجازة منتصف العام', startDateHijri: 'من 30-7 إلى 8-8-1448 هـ', endDateHijri: 'من 8-1 إلى 16-1-2027 م', weekType: 'HOLIDAY', region: 'GENERAL' },
-  ] as any[],
-  calendarDays: [] as any[],
-  activities: [] as any[],
+const inMemoryStore: {
+  users: any[];
+  admins: any[];
+  stages: any[];
+  tracks: any[];
+  grades: any[];
+  semesters: any[];
+  subjects: any[];
+  gradeSubjects: any[];
+  syllabusWeeks: any[];
+  calendarDays: any[];
+  activities: any[];
+} = {
+  users: [{ email: 'admin@wsyelhi.com', passwordHash: '' }],
+  admins: [{ name: 'مدير النظام' }],
+  stages: [],
+  tracks: [],
+  grades: [],
+  semesters: [],
+  subjects: [],
+  gradeSubjects: [],
+  syllabusWeeks: [],
+  calendarDays: [],
+  activities: [],
 };
 
 // Auth middleware
@@ -722,7 +652,7 @@ app.put('/api/grade-subjects/:id', authenticateToken, handleUpdateGradeSubject);
 
 // -------------------- SYLLABUS WEEKS --------------------
 
-app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) => {
+const handleExportPdf = async (req: Request, res: Response) => {
   const { html, title } = req.body;
   if (!html) return res.status(400).json({ error: 'محتوى HTML مطلوب' });
 
@@ -740,7 +670,7 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
             if (fs.existsSync(p2)) return p2;
           }
         }
-      } catch {}
+      } catch { }
       return null;
     };
 
@@ -761,7 +691,7 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
 
     const launchOptions: any = {
       headless: true,
-      executablePath: executablePath || '/usr/bin/chromium-browser',
+      executablePath: executablePath || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -772,6 +702,25 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
         '--single-process'
       ],
     };
+
+    let processedHtml = html;
+    try {
+      const possibleLogoPaths = [
+        path.join(__dirname, '../../frontend/public/wsylh-logo-full.png'),
+        path.join(__dirname, '../public/wsylh-logo-full.png'),
+        path.join(process.cwd(), 'frontend/public/wsylh-logo-full.png'),
+        path.join(process.cwd(), 'public/wsylh-logo-full.png'),
+        path.join(process.cwd(), '../frontend/public/wsylh-logo-full.png'),
+      ];
+      const foundPath = possibleLogoPaths.find(p => fs.existsSync(p));
+      if (foundPath) {
+        const logoBase64 = fs.readFileSync(foundPath).toString('base64');
+        const logoDataUri = `data:image/png;base64,${logoBase64}`;
+        processedHtml = processedHtml.replace(/src="[^"]*wsylh-logo-full\.png[^"]*"/g, `src="${logoDataUri}"`);
+      }
+    } catch (logoErr) {
+      console.error('Error processing logo image for PDF:', logoErr);
+    }
 
     const browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
@@ -784,121 +733,39 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
         <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
         <style>
           * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-          html, body { margin: 0; padding: 0; background: #ffffff; color: #000000; direction: rtl; width: 100%; height: 100%; box-sizing: border-box; }
-          .printable-sheet { height: 100vh !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; padding: 2mm 3mm 5mm 3mm !important; box-sizing: border-box !important; background: #ffffff !important; width: 100% !important; max-width: 100% !important; }
-          .ps-header {
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            align-items: center;
-            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
-            color: #0f172a;
-            padding: 3px 8px;
-            border-radius: 6px;
-            margin-bottom: 3px;
-            border: 1.5px solid #0f766e;
-            border-bottom: 2.5px solid #0f766e;
-          }
-          .ps-header-side.right { font-size: 10px; font-weight: 800; color: #0f766e; }
-          .ps-header-center h1 { margin: 0; font-size: 13.5px; font-weight: 900; color: #0f766e; text-align: center; letter-spacing: -0.3px; }
-          .ps-header-center p { margin: 1px 0 0 0; font-size: 8.5px; font-weight: 800; color: #0d9488; text-align: center; }
-          .ps-moe-logo span { display: block; line-height: 1.2; }
-          .ps-info-bar {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 4px;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 2px 6px;
-            margin-bottom: 3px;
-            text-align: center;
-          }
-          .ps-info-item { border-left: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center; gap: 4px; }
-          .ps-info-item:last-child { border-left: none; }
-          .ps-info-label { font-size: 9px; font-weight: 800; color: #0369a1; white-space: nowrap; }
-          .ps-info-val { font-size: 10px; font-weight: 900; color: #0f766e; white-space: nowrap; }
-          .ps-weeks-grid {
-            flex: 1 !important;
-            display: grid !important;
-            grid-template-columns: repeat(6, 1fr) !important;
-            grid-auto-rows: 1fr !important;
-            gap: 4px !important;
-            margin-bottom: 3px !important;
-            width: 100% !important;
-            align-items: stretch !important;
-          }
-          .ps-week-card {
-            min-height: 100% !important;
-            height: 100% !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-            border: 1.5px solid #bfdbfe;
-            border-radius: 5px;
-            overflow: hidden;
-            background: #ffffff;
-            box-shadow: none;
-            box-sizing: border-box !important;
-          }
-          .ps-week-card.is-holiday { border: 1.5px solid #fed7aa !important; background: #fff7ed !important; }
-          .ps-week-card.is-exam { border: 1.5px solid #a7f3d0 !important; background: #f0fdf4 !important; }
-          .ps-week-head { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: #ffffff; padding: 2px 3px; font-weight: 900; font-size: 9px; text-align: center; border-bottom: 1px solid #93c5fd; }
-          .ps-week-card.is-holiday .ps-week-head { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: #ffffff; border-color: #fed7aa; }
-          .ps-week-card.is-exam .ps-week-head { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border-color: #a7f3d0; }
-          .ps-week-body {
-            padding: 3px 4px !important;
-            font-size: 8px !important;
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: flex-start !important;
-            gap: 2px !important;
-            line-height: 1.2 !important;
-          }
-          .ps-card-dates { background: #f0f9ff; border: 1px solid #7dd3fc; border-radius: 3px; padding: 1px 2px; font-size: 7.5px; color: #0369a1; text-align: center; font-weight: 800; margin-bottom: 1px; line-height: 1.15; }
-          .ps-national-badge {
-            background: #ffedd5 !important;
-            color: #9a3412 !important;
-            padding: 2px 3px !important;
-            border-radius: 4px !important;
-            border: 1px solid #fdba74 !important;
-            font-size: 8px !important;
-            font-weight: 800 !important;
-            text-align: center !important;
-            margin: 1px 0 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 2px !important;
-            line-height: 1.15 !important;
-          }
-          .ps-exam-badge { background: #dcfce7 !important; color: #166534 !important; padding: 2px 3px !important; border-radius: 4px !important; border: 1px solid #86efac !important; font-size: 8px !important; font-weight: 800 !important; text-align: center !important; margin: 1px 0 !important; }
-          .ps-week-item { display: flex; gap: 3px; font-size: 8px; font-weight: 700; color: #1e293b; line-height: 1.2; alignItems: baseline; }
-          .ps-item-bullet { color: #d97706; font-weight: 900; font-size: 7px; }
-          .ps-footer-table { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 3px; margin-bottom: 3px; padding: 4px 8px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 9px; font-weight: 800; color: #1e293b; width: 100%; }
-          .ps-footer-copyright { display: flex !important; align-items: center !important; justify-content: center !important; margin-top: 2px !important; padding: 2px !important; font-size: 7.5px !important; font-weight: 700 !important; color: #64748b !important; border-top: 1px dashed #cbd5e1 !important; margin-bottom: 2px !important; }
+          html, body { margin: 0; padding: 0; background: #ffffff; color: #000000; direction: rtl; width: 100vw; height: 100vh; overflow: hidden; }
           @page { size: A4 landscape; margin: 0mm; }
         </style>
       </head>
       <body>
-        ${html}
+        ${processedHtml}
       </body>
       </html>
     `;
 
-    await page.setContent(fullPageHtml, { waitUntil: 'domcontentloaded' as any });
+    await page.setContent(fullPageHtml, { waitUntil: ['load', 'domcontentloaded'] as any });
     await page.evaluateHandle('document.fonts.ready').catch(() => { });
+    await page.evaluate(async () => {
+      const imgs = Array.from(document.querySelectorAll('img'));
+      await Promise.all(imgs.map(img => {
+        if (img.complete) return;
+        return new Promise(resolve => {
+          img.onload = resolve;
+          img.onerror = resolve;
+        });
+      }));
+    }).catch(() => { });
 
     const pdfBuffer = await page.pdf({
       format: 'A4',
       landscape: true,
       printBackground: true,
-      margin: { top: '2mm', right: '3mm', bottom: '5mm', left: '3mm' },
+      margin: { top: '0mm', right: '0mm', bottom: '0mm', left: '0mm' },
     });
 
     await browser.close();
 
-    const cleanTitle = (title || 'توزيع المنهج الدراسي').replace(/[\\/:*?"<>|]/g, '').trim();
+    const cleanTitle = (title || 'سجل الحضور والغياب').replace(/[\\/:*?"<>|]/g, '').trim();
     const buffer = Buffer.from(pdfBuffer);
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Length', buffer.length);
@@ -908,7 +775,10 @@ app.post('/api/syllabus-weeks/export-pdf', async (req: Request, res: Response) =
     console.error('Puppeteer PDF error:', err);
     return res.status(500).json({ error: 'فشل إنشاء PDF بواسطة Puppeteer: ' + err.message });
   }
-});
+};
+
+app.post('/api/generate-pdf', handleExportPdf);
+app.post('/api/syllabus-weeks/export-pdf', handleExportPdf);
 
 const VALID_REGIONS = ['GENERAL', 'MAKKAH', 'JEDDAH', 'TAIF', 'WESTERN'];
 const parseRegionEnum = (r?: any): any => {
@@ -923,20 +793,31 @@ app.get('/api/syllabus-weeks', async (req: Request, res: Response) => {
   const { gradeSubjectId, region } = req.query;
   if (!gradeSubjectId) return res.status(400).json({ error: 'gradeSubjectId مطلوب' });
 
+  const gSubjectIdStr = String(gradeSubjectId).trim();
+  const safeRegionEnum = parseRegionEnum(region);
+
   if (isDbConnected) {
     try {
-      const gSubjectIdStr = String(gradeSubjectId).trim();
-      const safeRegionEnum = parseRegionEnum(region);
+      // 1. Fetch GENERAL base weeks for this gradeSubject
+      const generalWeeks = await prisma.syllabusWeek.findMany({
+        where: {
+          gradeSubjectId: gSubjectIdStr,
+          region: 'GENERAL',
+        },
+        include: {
+          weekDays: { orderBy: { order: 'asc' } },
+          lesson: { include: { items: true } },
+        },
+        orderBy: { weekNumber: 'asc' },
+      });
 
-      let weeks: any[] = [];
-
-      try {
-        weeks = await prisma.syllabusWeek.findMany({
+      // 2. If non-GENERAL region requested, fetch custom weeks for that region
+      let regionWeeks: any[] = [];
+      if (safeRegionEnum !== 'GENERAL') {
+        regionWeeks = await prisma.syllabusWeek.findMany({
           where: {
             gradeSubjectId: gSubjectIdStr,
-            ...(region && region !== 'ALL' ? {
-              region: { in: [safeRegionEnum, 'WESTERN', 'GENERAL'] as any }
-            } : {}),
+            region: safeRegionEnum,
           },
           include: {
             weekDays: { orderBy: { order: 'asc' } },
@@ -944,71 +825,52 @@ app.get('/api/syllabus-weeks', async (req: Request, res: Response) => {
           },
           orderBy: { weekNumber: 'asc' },
         });
-      } catch (incErr: any) {
-        console.warn('Prisma findMany with includes failed, executing raw SQL:', incErr?.message || incErr);
-        try {
-          weeks = await prisma.$queryRaw`
-            SELECT * FROM "syllabus_weeks" 
-            WHERE "gradeSubjectId" = ${gSubjectIdStr}
-            ORDER BY "weekNumber" ASC
-          `;
-        } catch (rawErr) {
-          console.error('Raw SQL query failed:', rawErr);
-        }
       }
 
-      if (!weeks || weeks.length === 0) {
-        try {
-          weeks = await prisma.$queryRaw`
-            SELECT * FROM "syllabus_weeks" 
-            WHERE "gradeSubjectId" = ${gSubjectIdStr}
-            ORDER BY "weekNumber" ASC
-          `;
-        } catch { }
+      // 3. Map & Overlay: GENERAL view shows ONLY GENERAL weeks. Non-GENERAL starts with GENERAL base + overlays custom region weeks.
+      const weekMap = new Map<number, any>();
+      if (safeRegionEnum === 'GENERAL') {
+        generalWeeks.forEach((w: any) => weekMap.set(Number(w.weekNumber), w));
+      } else {
+        generalWeeks.forEach((w: any) => weekMap.set(Number(w.weekNumber), w));
+        regionWeeks.forEach((w: any) => weekMap.set(Number(w.weekNumber), w));
       }
 
-      const uniqueMap = new Map<number, any>();
-      (weeks || []).forEach((w: any) => {
-        const wNum = Number(w.weekNumber);
-        const existing = uniqueMap.get(wNum);
-        if (!existing) {
-          uniqueMap.set(wNum, w);
-        } else {
-          if (existing.region === 'GENERAL' && (w.region === safeRegionEnum || w.region === 'WESTERN' || w.region === 'MAKKAH')) {
-            uniqueMap.set(wNum, w);
-          }
-        }
-      });
-      const uniqueWeeksList = Array.from(uniqueMap.values()).sort((a, b) => a.weekNumber - b.weekNumber);
+      const uniqueWeeksList = Array.from(weekMap.values()).sort((a, b) => a.weekNumber - b.weekNumber);
 
-      let formatted = uniqueWeeksList.map((w: any) => ({
+      const formatted = uniqueWeeksList.map((w: any) => ({
         ...w,
         activity: w.lesson || w.activity || null,
         weekDays: w.weekDays || [],
       }));
 
-      if (formatted.length > 0) {
-        return res.json(formatted);
-      }
+      return res.json(formatted);
     } catch (err: any) {
       console.error('Error fetching syllabus weeks from DB:', err);
       return res.status(500).json({ error: 'خطأ في استعلام أسابيع المنهج من قاعدة البيانات: ' + (err.message || String(err)) });
     }
   }
 
-  let weeks = inMemoryStore.syllabusWeeks.filter(
-    (w) => w.gradeSubjectId === gradeSubjectId && (!region || w.region === region || w.region === 'GENERAL')
+  // Fallback in-memory logic when DB is offline
+  const genMem = inMemoryStore.syllabusWeeks.filter(
+    (w) => w.gradeSubjectId === gradeSubjectId && w.region === 'GENERAL'
   );
+  const regionMem = (safeRegionEnum !== 'GENERAL')
+    ? inMemoryStore.syllabusWeeks.filter(
+      (w) => w.gradeSubjectId === gradeSubjectId && w.region === safeRegionEnum
+    )
+    : [];
 
-  if (weeks.length === 0) {
-    weeks = inMemoryStore.syllabusWeeks.map(w => ({
-      ...w,
-      id: `w-default-${w.weekNumber}`,
-      gradeSubjectId: String(gradeSubjectId)
-    }));
+  const memMap = new Map<number, any>();
+  if (safeRegionEnum === 'GENERAL') {
+    genMem.forEach((w) => memMap.set(Number(w.weekNumber), w));
+  } else {
+    genMem.forEach((w) => memMap.set(Number(w.weekNumber), w));
+    regionMem.forEach((w) => memMap.set(Number(w.weekNumber), w));
   }
 
-  return res.json(weeks);
+  const result = Array.from(memMap.values()).sort((a, b) => a.weekNumber - b.weekNumber);
+  return res.json(result);
 });
 
 app.post('/api/syllabus-weeks', async (req: Request, res: Response) => {
@@ -1081,7 +943,7 @@ app.post('/api/syllabus-weeks', async (req: Request, res: Response) => {
   }
 
   const existingIdx = inMemoryStore.syllabusWeeks.findIndex(
-    (w) => w.gradeSubjectId === gradeSubjectId && w.weekNumber === Number(weekNumber)
+    (w) => w.gradeSubjectId === gradeSubjectId && w.weekNumber === Number(weekNumber) && w.region === targetRegionEnum
   );
 
   const weekObj = {
