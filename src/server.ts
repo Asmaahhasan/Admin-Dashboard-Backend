@@ -798,11 +798,10 @@ app.get('/api/syllabus-weeks', async (req: Request, res: Response) => {
 
   if (isDbConnected) {
     try {
-      // 1. Fetch GENERAL base weeks for this gradeSubject
-      const generalWeeks = await prisma.syllabusWeek.findMany({
+      const regionWeeks = await prisma.syllabusWeek.findMany({
         where: {
           gradeSubjectId: gSubjectIdStr,
-          region: 'GENERAL',
+          region: safeRegionEnum,
         },
         include: {
           weekDays: { orderBy: { order: 'asc' } },
@@ -811,34 +810,7 @@ app.get('/api/syllabus-weeks', async (req: Request, res: Response) => {
         orderBy: { weekNumber: 'asc' },
       });
 
-      // 2. If non-GENERAL region requested, fetch custom weeks for that region
-      let regionWeeks: any[] = [];
-      if (safeRegionEnum !== 'GENERAL') {
-        regionWeeks = await prisma.syllabusWeek.findMany({
-          where: {
-            gradeSubjectId: gSubjectIdStr,
-            region: safeRegionEnum,
-          },
-          include: {
-            weekDays: { orderBy: { order: 'asc' } },
-            lesson: { include: { items: true } },
-          },
-          orderBy: { weekNumber: 'asc' },
-        });
-      }
-
-      // 3. Map & Overlay: GENERAL view shows ONLY GENERAL weeks. Non-GENERAL starts with GENERAL base + overlays custom region weeks.
-      const weekMap = new Map<number, any>();
-      if (safeRegionEnum === 'GENERAL') {
-        generalWeeks.forEach((w: any) => weekMap.set(Number(w.weekNumber), w));
-      } else {
-        generalWeeks.forEach((w: any) => weekMap.set(Number(w.weekNumber), w));
-        regionWeeks.forEach((w: any) => weekMap.set(Number(w.weekNumber), w));
-      }
-
-      const uniqueWeeksList = Array.from(weekMap.values()).sort((a, b) => a.weekNumber - b.weekNumber);
-
-      const formatted = uniqueWeeksList.map((w: any) => ({
+      const formatted = regionWeeks.map((w: any) => ({
         ...w,
         activity: w.lesson || w.activity || null,
         weekDays: w.weekDays || [],
